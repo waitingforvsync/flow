@@ -17,3 +17,12 @@ ScreenHSyncPos = 98 - (80 - ScreenWidth) DIV 2
 ScreenVSyncPos = 35 - (32 - ScreenHeight) DIV 2
 ScreenStatusAddr = ScreenBaseAddr - ScreenWidth * StatusHeight * 8
 VSyncPulseWidth = 2
+
+\\ Other tables
+
+IF NOT(SMALL_SCREEN)
+	RowTabLo = ScreenStatusAddr - 25
+	RowTabHi = RowTabLo - 25
+ELSE
+	RowTabHi = ScreenStatusAddr
+ENDIF

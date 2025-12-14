@@ -1,0 +1,29 @@
+; Define columns of ball sprites
+; Each column is offset by &100 from the last
+
+ALIGN 64
+.spritedata
+    SKIPTO spritedata+&100*0    ; column 0
+    EQUB &00, &00, &00, &00, &41, &41, &41, &C6, &C6, &C6, &C6, &C6, &C6, &C6, &C6, &41, &41, &41, &00, &00, &00, &00    ; ball0
+    EQUB &00, &00, &00, &00, &00, &00, &00, &41, &41, &41, &41, &41, &41, &41, &41, &00, &00, &00, &00, &00, &00, &00    ; ball1
+
+    SKIPTO spritedata+&100*1    ; column 1
+    EQUB &00, &41, &C3, &C6, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &C6, &C3, &41, &00
+    EQUB &00, &00, &41, &41, &C6, &C6, &C6, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &C6, &C6, &C6, &41, &41, &00, &00
+
+    SKIPTO spritedata+&100*2    ; column 2
+    EQUB &C3, &C3, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &C3, &C3
+    EQUB &41, &C3, &C6, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &C6, &C3, &41
+    
+    SKIPTO spritedata+&100*3    ; column 3
+    EQUB &82, &C3, &C9, &CC, &CE, &CF, &DF, &CF, &CD, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &C9, &C3, &82
+    EQUB &C3, &C3, &CC, &CC, &CD, &CD, &CD, &CD, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &C3, &C3
+    
+    SKIPTO spritedata+&100*4    ; column 4
+    EQUB &00, &00, &82, &82, &C9, &C9, &CB, &CE, &CE, &CE, &CC, &CC, &CC, &CC, &CC, &C9, &C9, &C9, &82, &82, &00, &00
+    EQUB &00, &82, &C3, &C9, &CC, &CE, &EF, &CF, &CF, &CD, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &CC, &C9, &C3, &82, &00
+
+    SKIPTO spritedata+&100*5    ; column 5
+    EQUB &00, &00, &00, &00, &00, &00, &00, &82, &82, &82, &82, &82, &82, &82, &82, &00, &00, &00, &00, &00, &00, &00
+    EQUB &00, &00, &00, &00, &82, &82, &82, &C9, &C9, &C9, &C9, &C9, &C9, &C9, &C9, &82, &82, &82, &00, &00, &00, &00
+    

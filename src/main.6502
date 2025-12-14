@@ -1,4 +1,8 @@
+
 .start
+	JSR cls
+	JSR enableScreen
+
 .mainLoop
 ;	LDA #98
 ;	.waitforkey STA &FE4F:BIT &FE4F:BPL waitforkey

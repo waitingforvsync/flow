@@ -143,7 +143,27 @@ ENDIF
 	LDA #HI(GameHeight * 8 * 64 - 2):STA &FE47
 	
 	CLI
-	
+
+IF NOT(SMALL_SCREEN)
+	\\ Build row multiplication table
+	\\ If using small screen, we don't need this as the rows are 512 bytes wide
+	{
+		LDA #0
+		TAX
+		TAY
+		.rowTabLoop
+		STA RowTabLo,X
+		PHA
+		TYA:STA RowTabHi,X:TAY
+		PLA
+		CLC:ADC #LO(640)
+		INY:INY:BCC noCarry:INY:.noCarry
+		INX
+		CPX #25
+		BNE rowTabLoop
+	}
+ENDIF
+
 	JMP start
 
 	

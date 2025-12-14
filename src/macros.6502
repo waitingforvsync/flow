@@ -3,3 +3,11 @@ MACRO SAMEPAGE addr
         ERROR "Crosses page boundary"
     ENDIF
 ENDMACRO
+
+MACRO PCSKIP1
+    EQUB &24    ; BIT zp
+ENDMACRO
+
+MACRO PCSKIP2
+    EQUB &2C    ; BIT abs
+ENDMACRO

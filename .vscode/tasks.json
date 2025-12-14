@@ -8,7 +8,7 @@
                 "owner": "6502",
                 "fileLocation": [
                     "relative",
-                    "${workspaceRoot}/src"
+                    "${workspaceFolder}"
                 ],
                 "pattern": {
                     "regexp": "^(.*):(\\d+):\\s+(warning|error):\\s+(.*)$",
@@ -18,15 +18,12 @@
                     "message": 4
                 }
             },
-            "options": {
-                "cwd": "${workspaceFolder}/src"
-            },
             "command": "beebasm",
             "args": [
                 "-i",
-                "flow.6502",
+                "src/flow.6502",
                 "-do",
-                "../flow.ssd",
+                "flow.ssd",
                 "-opt",
                 "2"
             ],

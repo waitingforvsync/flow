@@ -3,6 +3,6 @@
         "sourceFile": [
             "src/flow.6502"
         ],
-        "targetName": "src/flow.ssd"
+        "targetName": "flow.ssd"
     }
 }

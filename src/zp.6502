@@ -1,5 +1,7 @@
 \ Uninitialized zero page variables
 
+.zpTempStart
+.zpTempEnd
 
 \\ Zero page variables initialized to zero
 
@@ -37,7 +39,8 @@ SKIPTO &100
 	RTI
 	
 .irqScrnTop
-	LDA #8:STA &FE00:LDA #&C0:STA &FE01
+	LDA #8:STA &FE00
+	.irqScreenEnabled LDA #&F0:STA &FE01
 	LDA #6:STA &FE00:LDA #GameHeight+1:STA &FE01
 	LDA #7:STA &FE00:LDA #255:STA &FE01
 	LDA #4:STA &FE00:LDA #GameHeight-1:STA &FE01
@@ -75,12 +78,47 @@ SKIPTO &100
 	LDA #HI((39 - 4 - GameHeight) * 8 * 64 - 2):STA &FE47
 	LDA &FC
 	RTI
-	
 
 
+\\ Clear the screen to zero
+
+.cls
+{
+	clsWrite = zpTempStart
+
+	IF SMALL_SCREEN
+		LDA #&58:STA clsWrite+1
+		LDX #&28
+	ELSE
+		LDA #&40:STA clsWrite+1
+		LDX #&40
+	ENDIF
+
+	LDA #0:STA clsWrite
+	TAY
+	.clsLoop
+	STA (clsWrite),Y
+	INY:BNE clsLoop
+	INC clsWrite+1
+	DEX:BNE clsLoop
+	RTS
+}
+
+
+PRINT "Wasted", ~&204-P%, "bytes"
 SKIPTO &204
 	EQUW irq
 	
 	
+.enableScreen
+	LDA #&C0
+	PCSKIP2		; skip LDA #&F0 below
+.disableScreen
+	LDA #&F0
+	STA irqScreenEnabled+1
+	RTS
+
+	
+
 SKIPTO &258
 	EQUB 2
