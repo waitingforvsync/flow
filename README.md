@@ -17,7 +17,7 @@ STA (screen),Y
 INY
 ```
 
-This sets the first requirement: that sprites may never overlap with non-blank background tiles (although we will try to support moving behind background tiles - more on that later).
+This sets the first requirement: that sprites may never overlap with non-blank background tiles (although we will try to support moving *behind* background tiles - more on that later).
 
 Moving sprites will normally have either one or two dirty edges (they may have even more if they are also changing size). These edges will be erased just before the sprite is written unmasked in its new position. Hence, a sprite moving horizontally has its dirty side edge erased, and then overwrites the rest of itself at its new position. It doesn't get faster than this!
 
@@ -47,3 +47,35 @@ We should aim to keep the dirty edge erasure as temporally close as possible to 
 ## Implementation overview
 
 This is a surprisingly complicated process which can be broken into various steps. For the moment, we will consider how to make it work in a static screen; then we can see how to adapt it so it works with scrolling.
+
+### Definitions
+
+A **sprite** has the following data associated with it:
+
+- Index (this is implicit)
+- old x, y, width, height
+- new x, y, width, height
+- sprite data pointer
+
+The old and new x, y, width, height can be seen as a bounding rectangle.
+
+The **dirty rectangle** of a sprite is the union of the old and new bounding rectangles.
+
+### Dirty list
+
+We maintain a list of sprite indices, sorted by the y position of their dirty rectangle. We'll call this the **dirty list**.
+
+We can exploit the fact that sprites move small distances each frame, by making this list persistent across frames. When a sprite changes its y position, we "bubble" its entry in the dirty list backwards or forwards, as appropriate, until it is correctly sorted.
+
+Now we consider character rows of the screen.
+
+We are going to update each row of the screen in isolation, from top to bottom, keeping track of the dirty rectangles which overlap that row. First we will erase the dirty edges in this row, then we will plot the segment of the sprite in its new position in this row.
+
+The first row we update comes from the first entry in the dirty list. We can skip straight to this row as there's nothing above here. We pull this index, and any subsequent indices whose dirty rectangles also start in this character row, into a new list which we'll call the **active list**.
+
+The active list contains the sprite indices which we have to consider in this row. It will persist across multiple rows.
+
+We also have to remember to remove indices from the active list when the row is no longer in the dirty rectangle.
+
+### Render list
+
