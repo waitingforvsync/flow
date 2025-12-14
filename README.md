@@ -71,6 +71,8 @@ Now we consider character rows of the screen.
 
 We are going to update each row of the screen in isolation, from top to bottom, keeping track of the dirty rectangles which overlap that row. First we will erase the dirty edges in this row, then we will plot the segment of the sprite in its new position in this row.
 
+Essentially we are breaking sprites up into row-wise chunks. Although that might sound inefficient, it is contiguous screen memory on the BBC Micro. Also, any data we set up for the first sprite row can be kept persistent, so we can pick up where we left off over subsequent rows. 
+
 The first row we update comes from the first entry in the dirty list. We can skip straight to this row as there's nothing above here. We pull this index, and any subsequent indices whose dirty rectangles also start in this character row, into a new list which we'll call the **active list**.
 
 The active list contains the sprite indices which we have to consider in this row. It will persist across multiple rows.
@@ -78,4 +80,30 @@ The active list contains the sprite indices which we have to consider in this ro
 We also have to remember to remove indices from the active list when the row is no longer in the dirty rectangle.
 
 ### Render list
+
+Sprites in the active list don't necessarily have any data to render; we might just need to erase their dirty edge. For example, if a sprite is moving downwards, perhaps it just left a dirty edge in the first row which needs erasing.
+
+So we will maintain a separate list, the **render list** which contains just sprites which need to be plotted on this row. While the active list is unordered, we will make a point of ordering the render list by sprite index. When we walk this, this will be the basis of the stacking order for when sprites overlap.
+
+We need to observe changes to the render list (indices being added or removed) as the next part of the overlap detection.
+
+### Overlaps
+
+We are already detecting overlaps in the y direction, by virtue of maintaining a sorted list of dirty rectangles and walking them from top to bottom. At a given moment, all the entries in the active list have dirty rectangle overlaps in y.
+
+To detect overlaps in the x direction, we will take a different approach.
+
+Let's suppose we are using a BBC Micro screen mode with 80 characters (bytes) across. All we want to know is whether a given byte has already had a sprite plotted in it; if so, we should enable masked plotting. So we just need a bitfield of 80 bits, initialized to all zeroes, which we will call the **occupancy mask**.
+
+As we walk the render list (in sprite index order), get the bounds of the sprite in x, and look in the occupancy mask for those x positions. A clear bit means that character column will be overwritten; a set bit means it will be written masked. Let's build a **render type bitmask** per sprite containing a copy of this data, up to a maximum width of 8 characters. And finally set the bit in the occupancy mask for subsequent entries in the active list.
+
+For a further optimisation, let's only initialise the occupancy mask when the render list *changes*. While the same sprites span consecutive rows, the occupancy data doesn't change, and we save ourselves some processing!
+
+Now, for the current row, we have a list of sprites to plot, ordered by index (via the render list), and for each character column, a bitmask saying whether to plot that byte column with the quick path (overwrite) or the slow path (masked).
+
+### Render
+
+Finally we're in a position to render this row. First erase the dirty edges for this row. Then render the sprite rows from the render list, according to the render type bitmask.
+
+Where a sprite covers multiple rows, much of the time, the render type bitmask and dirty edges will persist from one row to the next, making it quick to render, while also strictly respecting the raster racing.
 
