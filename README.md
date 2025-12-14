@@ -73,6 +73,8 @@ We are going to update each row of the screen in isolation, from top to bottom, 
 
 Essentially we are breaking sprites up into row-wise chunks. Although that might sound inefficient, it is contiguous screen memory on the BBC Micro. Also, any data we set up for the first sprite row can be kept persistent, so we can pick up where we left off over subsequent rows. 
 
+### Active list
+
 The first row we update comes from the first entry in the dirty list. We can skip straight to this row as there's nothing above here. We pull this index, and any subsequent indices whose dirty rectangles also start in this character row, into a new list which we'll call the **active list**.
 
 The active list contains the sprite indices which we have to consider in this row. It will persist across multiple rows.
@@ -99,11 +101,11 @@ As we walk the render list (in sprite index order), get the bounds of the sprite
 
 For a further optimisation, let's only initialise the occupancy mask when the render list *changes*. While the same sprites span consecutive rows, the occupancy data doesn't change, and we save ourselves some processing!
 
-Now, for the current row, we have a list of sprites to plot, ordered by index (via the render list), and for each character column, a bitmask saying whether to plot that byte column with the quick path (overwrite) or the slow path (masked).
+Now, for the current row, we have a list of sprites to plot, ordered by index (via the render list), and for each character column of each sprite, a bitmask saying whether to plot that byte column with the quick path (overwrite) or the slow path (masked).
 
 ### Render
 
-Finally we're in a position to render this row. First erase the dirty edges for this row. Then render the sprite rows from the render list, according to the render type bitmask.
+Finally we're in a position to render this row. First erase the dirty edges for this row. Then render the sprite rows from the render list, in index order, according to the render type bitmask.
 
 Where a sprite covers multiple rows, much of the time, the render type bitmask and dirty edges will persist from one row to the next, making it quick to render, while also strictly respecting the raster racing.
 
