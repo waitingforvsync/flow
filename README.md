@@ -17,7 +17,7 @@ STA (screen),Y
 INY
 ```
 
-This sets the first requirement that sprites may never overlap with non-blank background tiles (although we will try to support moving behind background tiles - more on that later).
+This sets the first requirement: that sprites may never overlap with non-blank background tiles (although we will try to support moving behind background tiles - more on that later).
 
 Moving sprites will normally have either one or two dirty edges (they may have even more if they are also changing size). These edges will be erased just before the sprite is written unmasked in its new position. Hence, a sprite moving horizontally has its dirty side edge erased, and then overwrites the rest of itself at its new position. It doesn't get faster than this!
 
@@ -36,3 +36,14 @@ INY
 ```
 
 Clearly this is slower so should be avoided where possible. We will try to limit the use of this path to just bytes where sprites are overlapping.
+
+### Avoid flicker
+
+We don't have the luxury of double buffering, so we will need to race the beam. This means we should be plotting the sprites roughly from top to bottom, but with the important requirement that if any group of sprites is overlapping, the members of that group are plotted in a stable order (not according to their position), so that their stacking position is preserved.
+
+We should aim to keep the dirty edge erasure as temporally close as possible to the sprite plotting, so that, even if the beam catches up, any flicker is avoided.
+
+
+## Implementation overview
+
+This is a surprisingly complicated process which can be broken into various steps. For the moment, we will consider how to make it work in a static screen; then we can see how to adapt it so it works with scrolling.
