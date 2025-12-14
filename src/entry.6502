@@ -1,0 +1,168 @@
+reload = &1200
+reloadOffset = reload - beginning
+
+.entry
+{
+	CLD
+	CLI
+	
+	\\ Shut down the OS
+	
+	LDA &FFB7:STA 0
+	LDA &FFB8:STA 1
+	LDY #10
+	LDA (0),Y:STA &20A:INY
+	LDA (0),Y:STA &20B						; Fetch default OSBYTE vector
+
+	LDA #16:LDX #0:JSR &FFF4				; Disable ADC
+	LDA #143:LDX #12:LDY #255:JSR &FFF4		; claim NMIs
+	LDA #140:LDX #0:JSR &FFF4				; select tape filing system for safety
+	LDA #19:JSR &FFF4						; wait for vsync before changing CRTC
+
+	SEI
+	LDX #LO(stackTop-1):TXS
+	
+ 	\\ Set CRTC values
+	
+	LDX #13
+	.setCrtcLoop
+	STX &FE00
+	LDA crtcRegs + reloadOffset,X:STA &FE01
+	DEX
+	BPL setCrtcLoop
+	
+	\\ Set Video ULA MODE 2
+	
+	LDA #&F4:STA &FE20
+	
+	\\ Set palette
+	
+	LDX #7
+	.setPalLoop
+	LDA palette + reloadOffset,X:STA &FE21
+	EOR #&80:STA &FE21
+	DEX
+	BPL setPalLoop
+	
+	\\ Disable shadow RAM
+	
+	LDA #0:STA &FE34
+	
+	\\ If we need Sideways RAM, here's the place to find it and page it in
+	
+	\\ Relocate
+	
+	LDX #HI(entry - beginning + &FF)
+	LDY #0
+	.relocateLoop
+	LDA beginning + reloadOffset,Y
+	STA beginning,Y
+	INY
+	BNE relocateLoop
+	INC relocateLoop + 2 + reloadOffset
+	INC relocateLoop + 5 + reloadOffset
+	DEX
+	BNE relocateLoop
+
+	\\ Set up VIAs
+	
+	LDA #&7F:STA &FE4E:STA &FE6E				; disable all VIA interrupts
+	STA &FE4D:STA &FE6D							; and clear all VIA flags
+	STA &FE43									; keyboard write bits 0-6
+	LDA #&C0:STA &FE4E							; enable System T1 interrupts
+	LDA #&40:STA &FE4B							; free-run System T1 timer operation
+	LDA #&0F:STA &FE42							; gain access to the addressable latch
+	LDX #&03:STX &FE40							; keyboard autoscan off
+	INX:STX &FE4C								; default PCR
+IF SMALL_SCREEN
+	LDX #12
+ENDIF
+	STX &FE40:INX:STX &FE40						; set 16k screen
+
+	\\ Sync to vsync
+	
+	LDA #2:STA &FE4D
+	.waitForVsync
+	BIT &FE4D
+	BEQ waitForVsync
+
+	; Roughly synced (to within 10 cycles)
+	; Now fine tune by waiting just less than one frame
+	; and check if VSync has fired. Repeat until it hasn't.
+	; One frame = 312*128 = 39936 cycles
+	
+	.syncLoop
+	STA &FE4D		; 6
+
+	LDX #209		; 2
+	.outerLoop
+	LDY #37			; 2
+	.innerLoop
+	DEY				; 2
+	BNE innerLoop	; 3/2 (innerLoop = 5*37+2-1 = 186)
+	DEX				; 2
+	BNE outerLoop	; 3/2 (outerLoop = (186+2+3)*209+2-1 = 39920)
+
+	BIT &FE4D 		; 6
+	BNE syncLoop 	; 3 (total = 39920+6+6+3 = 39935, one cycle less than a frame!)
+
+	SAMEPAGE syncLoop
+
+	; We are synced precisely with VSync!
+	; Now we have to set up the first timer which will take us
+	; to the first line of the visible screen
+	
+	; Latency until setting timer below
+	; BNE syncloop       2
+	; LDA #              2
+	; STA &FE44          6
+	; LDA #              2
+	; STA &FE45          6
+	
+	; Latency from interrupt path:
+	; (IRQ)              7
+	; STA &FC            3
+	; PLA                4
+	; PHA                3
+	; AND #&10           2
+	; BNE *+5            2
+	; JMP (&0204)        5 (CMOS 6)
+
+	; BIT &FE4D          6 (CMOS 5)
+	; BVS                3
+	;
+	; Total: 53
+	Latency = (53 + 1) DIV 2
+	LeftBorderOffset = 32
+	InitialTimer = ((39 - ScreenVSyncPos) * 8 - VSyncPulseWidth) * 64 - LeftBorderOffset - Latency
+
+	LDA #LO(InitialTimer):STA &FE44
+	LDA #HI(InitialTimer):STA &FE45
+
+	LDA #LO(GameHeight * 8 * 64 - 2):STA &FE46
+	LDA #HI(GameHeight * 8 * 64 - 2):STA &FE47
+	
+	CLI
+	
+	JMP start
+
+	
+	.crtcRegs
+		EQUB 127									; CRTC R0 - horizontal total
+		EQUB ScreenWidth							; CRTC R1 - horizontal displayed
+		EQUB ScreenHSyncPos							; CRTC R2 - horizontal sync pos
+		EQUB 8 + (VSyncPulseWidth << 4)				; CRTC R3 - sync width
+		EQUB 38										; CRTC R4 - vertical total
+		EQUB 0										; CRTC R5 - vertical total adjust
+		EQUB ScreenHeight							; CRTC R6 - vertical displayed
+		EQUB ScreenVSyncPos							; CRTC R7 - vertical sync pos
+		EQUB &F0									; CRTC R8 - interlace
+		EQUB 7										; CRTC R9 - scan lines per character
+		EQUB 32										; CRTC R10 - cursor start
+		EQUB 7										; CRTC R11 - cursor end
+		EQUB HI(ScreenBaseAddr DIV 8)				; CRTC R12 - screen start address, hi
+		EQUB LO(ScreenBaseAddr DIV 8)				; CRTC R13 - screen start address, lo
+		
+	.palette
+		EQUB &03, &17, &26, &32, &45, &51, &64, &70
+}

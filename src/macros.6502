@@ -1,0 +1,5 @@
+MACRO SAMEPAGE addr
+    IF HI(addr)<>HI(P%)
+        ERROR "Crosses page boundary"
+    ENDIF
+ENDMACRO

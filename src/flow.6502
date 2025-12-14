@@ -1,0 +1,17 @@
+\\ Create !BOOT file
+ORG &1200
+INCLUDE "boot.6502"
+SAVE "!BOOT", &1200, P%
+CLEAR &1200, P%
+
+\\ Create FLOW file
+ORG 0
+; if SMALL_SCREEN is TRUE, we will use a 10k (64x20) sized screen.
+; if SMALL_SCREEN is FALSE, we will use a 16k (80x25) sized screen.
+SMALL_SCREEN = FALSE
+INCLUDE "constants.6502"
+INCLUDE "macros.6502"
+INCLUDE "zp.6502"
+INCLUDE "main.6502"
+INCLUDE "entry.6502"
+SAVE "FLOW", beginning, P%, entry + reloadOffset, reload

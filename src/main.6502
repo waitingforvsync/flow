@@ -1,0 +1,17 @@
+.start
+.mainLoop
+;	LDA #98
+;	.waitforkey STA &FE4F:BIT &FE4F:BPL waitforkey
+;	.waitforkey2 STA &FE4F:BIT &FE4F:BMI waitforkey2
+
+	INC reqScrn:BNE P%+4:INC reqScrn+1
+	LDA reqLine:CLC:ADC #1:AND #7:STA reqLine
+	BNE sameLine
+	LDA reqScrn:CLC:ADC #ScreenWidth:STA reqScrn
+	LDA reqScrn+1:ADC #0:CMP #&10:BCC P%+4:LDA #HI(ScreenBaseAddr DIV 8):STA reqScrn+1
+	.sameLine
+	
+	LDA #1:STA reqUpdate
+	.wait LDA reqUpdate:BNE wait
+	
+	JMP mainLoop

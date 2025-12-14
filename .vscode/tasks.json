@@ -1,0 +1,51 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "BeebVSC Build Target 'flow.ssd'",
+            "type": "shell",
+            "problemMatcher": {
+                "owner": "6502",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}/src"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+            "command": "beebasm",
+            "args": [
+                "-i",
+                "flow.6502",
+                "-do",
+                "../flow.ssd",
+                "-opt",
+                "2"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "BeebVSC Test Target",
+            "type": "shell",
+            "command": "b2",
+            "args": [
+                "flow.ssd"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}

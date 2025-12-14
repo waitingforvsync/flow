@@ -1,0 +1,86 @@
+\ Uninitialized zero page variables
+
+
+\\ Zero page variables initialized to zero
+
+.zpZeroStart
+.zpZeroEnd
+
+\\ Zero page variables which need explicit initialization
+
+.beginning
+
+.irqScrn		EQUW (ScreenBaseAddr DIV 8)
+.irqLine		EQUB 0
+.irqVsync		EQUB 0
+.reqUpdate		EQUB 0
+.reqScrn		EQUW (ScreenBaseAddr DIV 8)
+.reqLine		EQUB 0
+
+
+\\ Stack
+
+SKIPTO &100
+.stack
+	SKIP 16
+.stackTop
+
+
+\\ Irq related code
+
+.irq
+	BIT &FE4D
+	BVS irqScrnTop
+	.irqBranchDest
+
+	LDA &FC
+	RTI
+	
+.irqScrnTop
+	LDA #8:STA &FE00:LDA #&C0:STA &FE01
+	LDA #6:STA &FE00:LDA #GameHeight+1:STA &FE01
+	LDA #7:STA &FE00:LDA #255:STA &FE01
+	LDA #4:STA &FE00:LDA #GameHeight-1:STA &FE01
+	LDA #5:STA &FE00:LDA irqLine:STA &FE01
+	LDA #12:STA &FE00:LDA #HI(ScreenStatusAddr DIV 8):STA &FE01
+	LDA #13:STA &FE00:LDA #LO(ScreenStatusAddr DIV 8):STA &FE01
+	LDA #(irqScrnBottom-irqBranchDest):STA irqBranchDest-1
+	LDA #HI(4 * 8 * 64 - 2):STA &FE47
+	LDA &FC
+	RTI
+
+.irqScrnVeryBottom
+	LDA #8:STA &FE00:LDA #&F0:STA &FE01
+	LDA #(irqScrnTop-irqBranchDest):STA irqBranchDest-1
+	LDA #HI(GameHeight * 8 * 64 - 2):STA &FE47
+	LDA &FC
+	RTI
+
+.irqScrnBottom
+	INC irqVsync
+	LDA reqUpdate:BEQ noUpdate
+	LDA irqVsync:.frameCount CMP #1:BCC noUpdate
+	LDA #0:STA reqUpdate:STA irqVsync
+	LDA reqScrn:STA irqScrn
+	LDA reqScrn+1:STA irqScrn+1
+	LDA reqLine:STA irqLine
+	.noUpdate
+	LDA #6:STA &FE00:LDA #StatusHeight:STA &FE01
+	LDA #7:STA &FE00:LDA #ScreenVSyncPos-GameHeight:STA &FE01
+	LDA #5:STA &FE00:SEC:LDA #8:SBC irqLine:STA &FE01
+	LDA #4:STA &FE00:LDA #37-GameHeight:STA &FE01
+	LDA #12:STA &FE00:LDA irqScrn+1:STA &FE01
+	LDA #13:STA &FE00:LDA irqScrn:STA &FE01
+	LDA #(irqScrnVeryBottom-irqBranchDest):STA irqBranchDest-1
+	LDA #HI((39 - 4 - GameHeight) * 8 * 64 - 2):STA &FE47
+	LDA &FC
+	RTI
+	
+
+
+SKIPTO &204
+	EQUW irq
+	
+	
+SKIPTO &258
+	EQUB 2

@@ -1,0 +1,19 @@
+\\ Dimensions of the displayed screen (characters, rows)
+
+IF SMALL_SCREEN
+	ScreenWidth = 64
+	GameHeight = 19
+	StatusHeight = 1
+	ScreenBaseAddr = &5800
+ELSE
+	ScreenWidth = 80
+	GameHeight = 24
+	StatusHeight = 1
+	ScreenBaseAddr = &4000
+ENDIF
+
+ScreenHeight = GameHeight + StatusHeight
+ScreenHSyncPos = 98 - (80 - ScreenWidth) DIV 2
+ScreenVSyncPos = 35 - (32 - ScreenHeight) DIV 2
+ScreenStatusAddr = ScreenBaseAddr - ScreenWidth * StatusHeight * 8
+VSyncPulseWidth = 2
