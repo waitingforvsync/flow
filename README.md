@@ -93,7 +93,7 @@ We also have to remember to remove indices from the active list when the row is 
 
 Sprites in the active list don't necessarily have any data to render; we might just need to erase their dirty edge. For example, if a sprite is moving downwards, perhaps it just left a dirty edge in the first row which needs erasing.
 
-So we will maintain a separate list, the **render list** which contains just sprites which need to be plotted on this row. While the active list is unordered, we will make a point of ordering the render list by sprite index. When we walk this, this will be the basis of the stacking order for when sprites overlap.
+So we will maintain a separate list, the **render list** which contains just sprites which need to be plotted on this row. While the active list is unordered, we will make a point of ordering the render list by sprite index. When we walk this, this will provide a stable stacking order for when sprites overlap.
 
 We need to observe changes to the render list (indices being added or removed) as the next part of the overlap detection.
 
@@ -105,7 +105,9 @@ To detect overlaps in the x direction, we will take a different approach.
 
 Let's suppose we are using a BBC Micro screen mode with 80 characters (bytes) across. All we want to know is whether a given byte has already had a sprite plotted in it; if so, we should enable masked plotting. So we just need a bitfield of 80 bits, initialized to all zeroes, which we will call the **occupancy mask**.
 
-As we walk the render list (in sprite index order), get the bounds of the sprite in x, and look in the occupancy mask for those x positions. A clear bit means that character column will be overwritten; a set bit means it will be written masked. Let's build a **render type bitmask** per sprite containing a copy of this data, up to a maximum width of 8 characters. And finally set the bit in the occupancy mask for subsequent entries in the active list.
+> Note: this is a shortcut which assumes that if a sprite is present in a row, it occupies the entire character height. In reality, two sprites in a row might be overlapping in x, but not really overlapping because they occupy different ranges in y, for example, the fisrt two and the last two lines. In this case we will pay the price for unnecessary masking, but it simplifies things hugely.  
+
+As we walk the render list (in sprite index order), get the bounds of the sprite in x, and look at the occupancy mask bits for those x positions. A clear bit means that character column will be overwritten; a set bit means it will be written masked. Let's build a **render type bitmask** per sprite containing a copy of this data, up to a maximum width of 8 characters. And finally set the bits in the occupancy mask to mark that position as "now occupied". This will be observed by subsequent entries in the active list.
 
 For a further optimisation, let's only initialise the occupancy mask when the render list *changes*. While the same sprites span consecutive rows, the occupancy data doesn't change, and we save ourselves some processing!
 
