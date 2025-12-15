@@ -21,8 +21,6 @@ This sets the first requirement: that sprites may never overlap with non-blank b
 
 Moving sprites will normally have either one or two dirty edges (they may have even more if they are also changing size). These edges will be erased just before the sprite is written unmasked in its new position. Hence, a sprite moving horizontally has its dirty side edge erased, and then overwrites the rest of itself at its new position. It doesn't get faster than this!
 
-![Dirty sprite](/docs/sprite.svg)
-
 ### What about when sprites cross each other?
 
 Then we need to perform masking writes. But only in the places where they actually overlap. The first of the sprites can still be plotted by overwriting. Any sprites which overlap, should then be plotted with a slower masked path:
@@ -67,6 +65,9 @@ A **sprite** has the following data associated with it:
 The old and new x, y, width, height can be seen as a bounding rectangle.
 
 The **dirty rectangle** of a sprite is the union of the old and new bounding rectangles.
+
+![Dirty sprite](/docs/sprite.svg)
+
 
 ### Dirty list
 
