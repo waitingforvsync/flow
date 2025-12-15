@@ -21,6 +21,8 @@ This sets the first requirement: that sprites may never overlap with non-blank b
 
 Moving sprites will normally have either one or two dirty edges (they may have even more if they are also changing size). These edges will be erased just before the sprite is written unmasked in its new position. Hence, a sprite moving horizontally has its dirty side edge erased, and then overwrites the rest of itself at its new position. It doesn't get faster than this!
 
+![Dirty sprite](/docs/sprite.svg)
+
 ### What about when sprites cross each other?
 
 Then we need to perform masking writes. But only in the places where they actually overlap. The first of the sprites can still be plotted by overwriting. Any sprites which overlap, should then be plotted with a slower masked path:
@@ -28,20 +30,25 @@ Then we need to perform masking writes. But only in the places where they actual
 ```
 LDA (spritedata),Y
 STA maskindex+1
+LDA (screen),Y
 .maskindex
-LDA masktable    ; page aligned, self modify operand LSB
+AND masktable    ; page aligned, self modify operand LSB
 ORA maskindex+1
 STA (screen),Y
 INY
 ```
 
-Clearly this is slower so should be avoided where possible. We will try to limit the use of this path to just bytes where sprites are overlapping.
+This is 15 cycles per byte more than the unmasked write, so should be avoided where possible. We will try to limit the use of this path to just bytes where sprites are overlapping.
 
 ### Avoid flicker
 
 We don't have the luxury of double buffering, so we will need to race the beam. This means we should be plotting the sprites roughly from top to bottom, but with the important requirement that if any group of sprites is overlapping, the members of that group are plotted in a stable order (not according to their position), so that their stacking position is preserved.
 
-We should aim to keep the dirty edge erasure as temporally close as possible to the sprite plotting, so that, even if the beam catches up, any flicker is avoided.
+We should aim to keep the dirty edge erasure as temporally close as possible to the sprite plotting, so that, even if the beam catches up, at worst we get tearing rather than flicker.
+
+### Keep it small!
+
+It would be so easy to detect overlaps if we just kept a high-level mirror of the screen character blocks in memory with a bitfield representing which sprites appear where (this could also be reused for collision detection!). But a 80x24x16 bits buffer is probably more than we can afford. So we will need to find an alternative way.
 
 
 ## Implementation overview
@@ -65,7 +72,7 @@ The **dirty rectangle** of a sprite is the union of the old and new bounding rec
 
 We maintain a list of sprite indices, sorted by the y position of their dirty rectangle. We'll call this the **dirty list**.
 
-We can exploit the fact that sprites move small distances each frame, by making this list persistent across frames. When a sprite changes its y position, we "bubble" its entry in the dirty list backwards or forwards, as appropriate, until it is correctly sorted.
+We can exploit the fact that sprites move small distances each frame by making this list persistent across frames. When a sprite changes its y position, we "bubble" its entry in the dirty list backwards or forwards, as appropriate, until it is correctly sorted.
 
 Now we consider character rows of the screen.
 

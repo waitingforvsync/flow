@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (2aeb623e1d, 2025-05-12)"
+   sodipodi:docname="sprite.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.613876"
+     inkscape:cx="327.78231"
+     inkscape:cy="430.33046"
+     inkscape:window-width="2478"
+     inkscape:window-height="1531"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#Strips1_1.5"
+       preserveAspectRatio="xMidYMid"
+       id="pattern8"
+       patternTransform="matrix(0.28991378,0.28991378,-0.28991378,0.28991378,0,0)"
+       x="0"
+       y="0"
+       width="7.5"
+       height="3" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#Strips1_1.5"
+       preserveAspectRatio="xMidYMid"
+       id="pattern7"
+       patternTransform="matrix(0.28991378,0.28991378,-0.28991378,0.28991378,0,0)"
+       x="0"
+       y="0"
+       width="7.5"
+       height="3" />
+    <pattern
+       inkscape:collect="always"
+       patternUnits="userSpaceOnUse"
+       width="2.5"
+       height="1"
+       patternTransform="translate(0,0) scale(2,2)"
+       preserveAspectRatio="xMidYMid"
+       id="Strips1_1.5"
+       style="fill:#d3b100"
+       inkscape:stockid="Stripes 02 (2:3)"
+       inkscape:isstock="true"
+       inkscape:label="Stripes 02 (2:3)">
+      <rect
+   style="stroke:none"
+   x="0"
+   y="-0.5"
+   width="1"
+   height="2"
+   id="rect140" />
+
+    </pattern>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#fff594;stroke-width:1;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-dasharray:none"
+       id="rect1"
+       width="61.440281"
+       height="59.817329"
+       x="41.037468"
+       y="22.25761" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-dasharray:2,0.5;stroke-opacity:1;stroke-dashoffset:0"
+       id="rect2"
+       width="64.222481"
+       height="65.613579"
+       x="20.402809"
+       y="37.791569" />
+    <rect
+       style="fill:url(#pattern7);fill-opacity:1;stroke:#000000;stroke-width:0.499999;stroke-dasharray:2, 0.499999;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3"
+       width="62.135834"
+       height="15.533958"
+       x="40.805618"
+       y="22.025761" />
+    <rect
+       style="fill:url(#pattern8);fill-opacity:1;stroke:#000000;stroke-width:0.499999;stroke-dasharray:2, 0.499999;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect7"
+       width="17.388763"
+       height="44.515217"
+       x="84.62529"
+       y="37.559719" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#0b0a00;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:2, 0.499999;stroke-dashoffset:0;stroke-opacity:1"
+       x="65.796829"
+       y="79.353821"
+       id="text8"><tspan
+         id="tspan8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#0b0a00;fill-opacity:1;stroke:none;stroke-width:0.5"
+         x="65.796829"
+         y="79.353821"
+         sodipodi:role="line">New</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#0b0a00;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:2, 0.499999;stroke-dashoffset:0;stroke-opacity:1"
+       x="48.232475"
+       y="101.19916"
+       id="text9"><tspan
+         sodipodi:role="line"
+         id="tspan9"
+         style="fill:#0b0a00;fill-opacity:1;stroke:none;stroke-width:0.5"
+         x="48.232475"
+         y="101.19916">Old</tspan></text>
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#f50202;stroke-width:0.5;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect10"
+       width="84.594482"
+       height="83.774773"
+       x="19.181305"
+       y="20.984676"
+       ry="0.32788557" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#f30000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
+       x="105.90704"
+       y="91.807961"
+       id="text10"><tspan
+         sodipodi:role="line"
+         id="tspan10"
+         style="stroke-width:0.5;stroke:none;fill:#f30000;fill-opacity:1"
+         x="105.90704"
+         y="91.807961" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#f30000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
+       x="105.57915"
+       y="102.95608"
+       id="text11"><tspan
+         sodipodi:role="line"
+         id="tspan11"
+         style="stroke-width:0.5"
+         x="105.57915"
+         y="102.95608">Dirty rectangle</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
+       x="88.365166"
+       y="35.903469"
+       id="text12"><tspan
+         sodipodi:role="line"
+         id="tspan12"
+         style="stroke-width:0.5;fill:#000000;fill-opacity:1"
+         x="88.365166"
+         y="35.903469">Dirty </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
+       x="88.037277"
+       y="41.477528"
+       id="text13"><tspan
+         sodipodi:role="line"
+         id="tspan13"
+         style="stroke-width:0.5;stroke:none"></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
+       x="87.217567"
+       y="41.477528"
+       id="text14"><tspan
+         sodipodi:role="line"
+         id="tspan14"
+         style="stroke-width:0.5"
+         x="87.217567"
+         y="41.477528">edges</tspan></text>
+  </g>
+</svg>
