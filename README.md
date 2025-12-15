@@ -99,13 +99,16 @@ We need to observe changes to the render list (indices being added or removed) a
 
 ### Overlaps
 
-We are already detecting overlaps in the y direction, by virtue of maintaining a sorted list of dirty rectangles and walking them from top to bottom. At a given moment, all the entries in the active list have dirty rectangle overlaps in y.
+We are already detecting overlaps in the y direction, by virtue of maintaining a sorted list of dirty rectangles and walking them from top to bottom. At a given moment, all the entries in the active list have dirty rectangle overlaps in the y axis.
 
 To detect overlaps in the x direction, we will take a different approach.
 
 Let's suppose we are using a BBC Micro screen mode with 80 characters (bytes) across. All we want to know is whether a given byte has already had a sprite plotted in it; if so, we should enable masked plotting. So we just need a bitfield of 80 bits, initialized to all zeroes, which we will call the **occupancy mask**.
 
-> Note: this is a shortcut which assumes that if a sprite is present in a row, it occupies the entire character height. In reality, two sprites in a row might be overlapping in x, but not really overlapping because they occupy different ranges in y, for example, the fisrt two and the last two lines. In this case we will pay the price for unnecessary masking, but it simplifies things hugely.  
+---
+> [!NOTE]
+> This is a shortcut which assumes that if a sprite is present in a row, it occupies the entire character height. In reality, two sprites in a row might be overlapping in x, but not really overlapping because they occupy different ranges in y, for example, the fisrt two and the last two lines. In this case we will pay the price for unnecessary masking, but it simplifies things hugely.
+---
 
 As we walk the render list (in sprite index order), get the bounds of the sprite in x, and look at the occupancy mask bits for those x positions. A clear bit means that character column will be overwritten; a set bit means it will be written masked. Let's build a **render type bitmask** per sprite containing a copy of this data, up to a maximum width of 8 characters. And finally set the bits in the occupancy mask to mark that position as "now occupied". This will be observed by subsequent entries in the active list.
 
