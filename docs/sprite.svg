@@ -40,7 +40,7 @@
        xlink:href="#Strips1_1.5"
        preserveAspectRatio="xMidYMid"
        id="pattern8"
-       patternTransform="matrix(0.28991378,0.28991378,-0.28991378,0.28991378,4.7543409,4.2625125)"
+       patternTransform="matrix(0.28284271,0.28284271,-0.28284271,0.28284271,-73.582089,4.7604197)"
        x="0"
        y="0"
        width="7.5"
@@ -50,7 +50,7 @@
        xlink:href="#Strips1_1.5"
        preserveAspectRatio="xMidYMid"
        id="pattern7"
-       patternTransform="matrix(0.28991378,0.28991378,-0.28991378,0.28991378,4.7543409,4.2625125)"
+       patternTransform="matrix(0.28284271,0.28284271,-0.28284271,0.28284271,-16.748174,57.025336)"
        x="0"
        y="0"
        width="7.5"
@@ -97,19 +97,19 @@
        x="25.15715"
        y="42.054081" />
     <rect
-       style="fill:url(#pattern7);fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-dasharray:1.2, 0.3;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:url(#pattern7);fill-opacity:1;stroke:#000000;stroke-width:0.353668;stroke-dasharray:1.41467, 0.353668;stroke-dashoffset:0;stroke-opacity:1"
        id="rect3"
-       width="62.135834"
-       height="15.533958"
-       x="45.559959"
-       y="26.288273" />
+       width="64.213425"
+       height="20.890402"
+       x="25.421831"
+       y="86.646049" />
     <rect
-       style="fill:url(#pattern8);fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-dasharray:1.2, 0.3;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:url(#pattern8);fill-opacity:1;stroke:#000000;stroke-width:0.323587;stroke-dasharray:1.29435, 0.323587;stroke-dashoffset:0;stroke-opacity:1"
        id="rect7"
-       width="17.388763"
-       height="44.515217"
-       x="89.379631"
-       y="41.822231" />
+       width="20.316147"
+       height="44.327686"
+       x="25.289793"
+       y="42.161911" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#0b0a00;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:2, 0.499999;stroke-dashoffset:0;stroke-opacity:1"
@@ -154,24 +154,24 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
-       x="93.119507"
-       y="40.165981"
+       x="29.345762"
+       y="85.250252"
        id="text12"><tspan
          sodipodi:role="line"
          id="tspan12"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke-width:0.5"
-         x="93.119507"
-         y="40.165981">Dirty </tspan></text>
+         x="29.345762"
+         y="85.250252">Dirty </tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
-       x="91.971909"
-       y="45.74004"
+       x="28.362106"
+       y="90.332481"
        id="text14"><tspan
          sodipodi:role="line"
          id="tspan14"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.5"
-         x="91.971909"
-         y="45.74004">edges</tspan></text>
+         x="28.362106"
+         y="90.332481">edges</tspan></text>
   </g>
 </svg>
