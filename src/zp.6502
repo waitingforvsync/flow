@@ -1,31 +1,228 @@
-\ Uninitialized zero page variables
+ORG 0
+GUARD Base
 
-.zpTempStart
+\\ This is a temporary zero page buffer which is utilised like a stack frame
+\\ Subroutines will alias values in this buffer according to their local needs,
+\\ taking into account the allocation needs of child subroutine calls.
+\\ TODO: write an assembler which can do this work for me :)
+
+.zpTempStart		SKIP 16
 .zpTempEnd
 
-\\ Zero page variables initialized to zero
+\\ Uninitialized zero page variables
+
+.spriteFreePtr		SKIP 1
+.spriteActiveNum	SKIP 1
+.reqScrn			SKIP 2
+.reqLine			SKIP 1
+.spriteRenderMask	SKIP 1
+
+\\ Zero page variables initialized to zero at startup
 
 .zpZeroStart
+.irqLine			EQUB 0
+.irqVsync			EQUB 0
+.reqUpdate			EQUB 0
 .zpZeroEnd
 
 \\ Zero page variables which need explicit initialization
 
+SKIPTO &80
 .beginning
+.irqScrn			EQUW (ScreenBaseAddr DIV 8)
 
-.irqScrn		EQUW (ScreenBaseAddr DIV 8)
-.irqLine		EQUB 0
-.irqVsync		EQUB 0
-.reqUpdate		EQUB 0
-.reqScrn		EQUW (ScreenBaseAddr DIV 8)
-.reqLine		EQUB 0
+; 6 more bytes free here
+
+SKIPTO &88
+
+
+\\ Masked sprite routine in zero page, for speed
+.renderMasked0
+	sprite = P%+1:LDA &FFFF,Y:STA maskIndex0
+	maskIndex0 = P%+1:LDA MaskTab
+	screen = P%+1:AND &FFFF,Y
+	ORA maskIndex0:STA (screen),Y:INY
+
+.renderMasked1
+	LDA (sprite),Y:STA maskIndex1
+	maskIndex1 = P%+1:LDA MaskTab
+	AND (screen),Y:ORA maskIndex1:STA (screen),Y:INY
+
+.renderMasked2
+	LDA (sprite),Y:STA maskIndex2
+	maskIndex2 = P%+1:LDA MaskTab
+	AND (screen),Y:ORA maskIndex2:STA (screen),Y:INY
+
+.renderMasked3
+	LDA (sprite),Y:STA maskIndex3
+	maskIndex3 = P%+1:LDA MaskTab
+	AND (screen),Y:ORA maskIndex3:STA (screen),Y:INY
+
+.renderMasked4
+	LDA (sprite),Y:STA maskIndex4
+	maskIndex4 = P%+1:LDA MaskTab
+	AND (screen),Y:ORA maskIndex4:STA (screen),Y:INY
+
+.renderMasked5
+	LDA (sprite),Y:STA maskIndex5
+	maskIndex5 = P%+1:LDA MaskTab
+	AND (screen),Y:ORA maskIndex5:STA (screen),Y:INY
+
+.renderMasked6
+	LDA (sprite),Y:STA maskIndex6
+	maskIndex6 = P%+1:LDA MaskTab
+	AND (screen),Y:ORA maskIndex6:STA (screen),Y:INY
+
+.renderMasked7
+	LDA (sprite),Y:STA maskIndex7
+	maskIndex7 = P%+1:LDA MaskTab
+	AND (screen),Y:ORA maskIndex7:STA (screen),Y
+
+	JMP nextSpriteBlock
+
+
+SKIPTO &FC
+	BRK			; gets unavoidably corrupted by OS IRQ handler
+
+
+\\ Render a character aligned sprite row.
+\\ On entry:
+\\  X = number of character blocks width
+\\	(sprite) = sprite data
+\\	(screen) = screen address
+\\	spriteLine = screen/sprite offset
+.renderSpriteRow
+	spriteLine = P%+1:LDY #0
+	LSR spriteRenderMask
+	BCC renderOverwrite7
+	.renderSpriteBranchDest
+	JMP renderMasked0
+
+
+\\ Overwrite screen memory directly, no masking
+.renderOverwrite0
+	LDA (sprite),Y:STA (screen),Y:INY
+.renderOverwrite1
+	LDA (sprite),Y:STA (screen),Y:INY
+.renderOverwrite2
+	LDA (sprite),Y:STA (screen),Y:INY
+.renderOverwrite3
+	LDA (sprite),Y:STA (screen),Y:INY
+.renderOverwrite4
+	LDA (sprite),Y:STA (screen),Y:INY
+.renderOverwrite5
+	LDA (sprite),Y:STA (screen),Y:INY
+.renderOverwrite6
+	LDA (sprite),Y:STA (screen),Y:INY
+.renderOverwrite7
+	SAMEPAGE renderOverwrite0
+	LDA (sprite),Y:STA (screen),Y
+
+
+.nextSpriteBlock
+	DEX
+	BEQ spriteFinished
+
+	INC sprite+1
+
+	CLC
+	LDA screen:ADC #8:STA screen
+	BCC renderSpriteRow
+	INC screen+1
+	BPL renderSpriteRow
+	LDA #HI(ScreenBaseAddr):STA screen+1
+	BNE renderSpriteRow
+
+.spriteFinished
+	RTS
+
+
+.renderErase
+	eraseLine = P%+1:LDY #0
+	JMP renderErase0
+
+\\ Erase block, assuming A=0
+.renderErase0
+	STA (screen),Y:INY
+.renderErase1
+	STA (screen),Y:INY
+.renderErase2
+	STA (screen),Y:INY
+.renderErase3
+	STA (screen),Y:INY
+.renderErase4
+	STA (screen),Y:INY
+.renderErase5
+	STA (screen),Y:INY
+.renderErase6
+	STA (screen),Y:INY
+.renderErase7
+	STA (screen),Y
+
+	DEX
+	BEQ spriteFinished
+
+	CLC
+	LDA screen:ADC #8:STA screen
+	BCC renderErase
+	INC screen+1
+	BPL renderErase
+	LDA #HI(ScreenBaseAddr):STA screen+1
+	BNE renderErase
 
 
 \\ Stack
 
-SKIPTO &100
 .stack
 	SKIP 16
 .stackTop
+
+
+
+\\ Clear the screen to zero
+
+.cls
+{
+	clsWrite = zpTempStart
+
+	IF SMALL_SCREEN
+		LDA #&58:STA clsWrite+1
+		LDX #&28
+	ELSE
+		LDA #&40:STA clsWrite+1
+		LDX #&40
+	ENDIF
+
+	LDA #0:STA clsWrite
+	TAY
+	.clsLoop
+	STA (clsWrite),Y
+	INY:BNE clsLoop
+	INC clsWrite+1
+	DEX:BNE clsLoop
+	RTS
+}
+
+
+.enableScreen
+	LDA #&C0
+	PCSKIP2		; skip LDA #&F0 below
+.disableScreen
+	LDA #&F0
+	STA irqScreenEnabled+1
+	RTS
+
+
+
+PRINT "Wasted", ~&204-P%, "bytes"
+SKIPTO &204
+	EQUW irq
+	
+	
+	
+
+SKIPTO &258
+	EQUB 2
 
 
 \\ Irq related code
@@ -60,6 +257,7 @@ SKIPTO &100
 	RTI
 
 .irqScrnBottom
+	SAMEPAGE irqBranchDest
 	INC irqVsync
 	LDA reqUpdate:BEQ noUpdate
 	LDA irqVsync:.frameCount CMP #1:BCC noUpdate
@@ -79,46 +277,3 @@ SKIPTO &100
 	LDA &FC
 	RTI
 
-
-\\ Clear the screen to zero
-
-.cls
-{
-	clsWrite = zpTempStart
-
-	IF SMALL_SCREEN
-		LDA #&58:STA clsWrite+1
-		LDX #&28
-	ELSE
-		LDA #&40:STA clsWrite+1
-		LDX #&40
-	ENDIF
-
-	LDA #0:STA clsWrite
-	TAY
-	.clsLoop
-	STA (clsWrite),Y
-	INY:BNE clsLoop
-	INC clsWrite+1
-	DEX:BNE clsLoop
-	RTS
-}
-
-
-PRINT "Wasted", ~&204-P%, "bytes"
-SKIPTO &204
-	EQUW irq
-	
-	
-.enableScreen
-	LDA #&C0
-	PCSKIP2		; skip LDA #&F0 below
-.disableScreen
-	LDA #&F0
-	STA irqScreenEnabled+1
-	RTS
-
-	
-
-SKIPTO &258
-	EQUB 2

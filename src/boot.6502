@@ -1,5 +1,7 @@
 \\ !Boot file
 
+ORG &1200
+
 .boot
 {
     CLI

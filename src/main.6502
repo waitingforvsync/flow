@@ -1,7 +1,10 @@
 
 .start
-	JSR cls
+;	JSR cls
 	JSR enableScreen
+	LDA #LO(ScreenBaseAddr DIV 8):STA reqScrn
+	LDA #HI(ScreenBaseAddr DIV 8):STA reqScrn+1
+	LDA #0:STA reqLine
 
 .mainLoop
 ;	LDA #98

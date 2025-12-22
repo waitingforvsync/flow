@@ -1,17 +1,17 @@
 \\ Create !BOOT file
-ORG &1200
 INCLUDE "src/boot.6502"
-SAVE "!BOOT", &1200, P%
-CLEAR &1200, P%
+SAVE "!BOOT", boot, P%
+CLEAR boot, P%
 
 \\ Create FLOW file
-ORG 0
 ; if SMALL_SCREEN is TRUE, we will use a 10k (64x20) sized screen.
 ; if SMALL_SCREEN is FALSE, we will use a 16k (80x25) sized screen.
 SMALL_SCREEN = FALSE
+DEBUG = FALSE
 INCLUDE "src/macros.6502"
 INCLUDE "src/constants.6502"
 INCLUDE "src/zp.6502"
+INCLUDE "src/sprite.6502"
 INCLUDE "src/main.6502"
 INCLUDE "src/testsprites.6502"
 INCLUDE "src/entry.6502"

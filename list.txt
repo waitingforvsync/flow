@@ -1,0 +1,826 @@
+.boot
+     1200   58         CLI
+     1201   A2 00      LDX #&00
+.loop
+     1203   BD 25 12   LDA &1225,X
+     1206   20 E3 FF   JSR &FFE3
+     1209   E8         INX
+     120A   C9 0D      CMP #&0D
+     120C   D0 F5      BNE &1203
+     120E   20 E7 FF   JSR &FFE7
+     1211   A9 13      LDA #&13
+     1213   20 F4 FF   JSR &FFF4
+     1216   A9 0F      LDA #&0F
+     1218   A2 00      LDX #&00
+     121A   20 F4 FF   JSR &FFF4
+     121D   A2 24      LDX #&24
+     121F   A0 12      LDY #&12
+     1221   4C F7 FF   JMP &FFF7
+.cmd
+     1224   2F 46 4C ...
+     1229   0D
+     122A   56 30 2E ...
+     122F   0D
+     1230   52 69 63 ...
+Saving file '!BOOT'
+.MaskTab
+     3800
+.SpriteNewX0
+     3900
+.SpriteNewY0
+     3920
+.SpriteNewX1
+     3940
+.SpriteNewY1
+     3960
+.SpriteOldX0
+     3980
+.SpriteOldY0
+     39A0
+.SpriteOldX1
+     39C0
+.SpriteOldY1
+     39E0
+.SpriteBoxY0
+     3A00
+.SpriteBoxY1
+     3A20
+.SpriteAddrLo
+     3A40
+.SpriteAddrHi
+     3A60
+.SpriteFreeList
+     3A80
+.SpriteActiveList
+     3AA0
+.RowTabLo
+     3AC0
+.RowTabHi
+     3AD9
+.zpTempStart
+     0000
+.zpTempEnd
+.spriteFreePtr
+     0010
+.spriteActiveNum
+     0011
+.reqScrn
+     0012
+.reqLine
+     0014
+.zpZeroStart
+.irqLine
+     0015   00
+.irqVsync
+     0016   00
+.reqUpdate
+     0017   00
+.zpZeroEnd
+.beginning
+.irqScrn
+     0018   00 08
+.renderMasked0
+     0088   B9 FF FF   LDA &FFFF,Y
+     008B   85 8E      STA &8E
+     008D   AD 00 38   LDA &3800
+     0090   39 FF FF   AND &FFFF,Y
+     0093   05 8E      ORA &8E
+     0095   91 91      STA (&91),Y
+     0097   C8         INY
+.renderMasked1
+     0098   B1 89      LDA (&89),Y
+     009A   85 9D      STA &9D
+     009C   AD 00 38   LDA &3800
+     009F   31 91      AND (&91),Y
+     00A1   05 9D      ORA &9D
+     00A3   91 91      STA (&91),Y
+     00A5   C8         INY
+.renderMasked2
+     00A6   B1 89      LDA (&89),Y
+     00A8   85 AB      STA &AB
+     00AA   AD 00 38   LDA &3800
+     00AD   31 91      AND (&91),Y
+     00AF   05 AB      ORA &AB
+     00B1   91 91      STA (&91),Y
+     00B3   C8         INY
+.renderMasked3
+     00B4   B1 89      LDA (&89),Y
+     00B6   85 B9      STA &B9
+     00B8   AD 00 38   LDA &3800
+     00BB   31 91      AND (&91),Y
+     00BD   05 B9      ORA &B9
+     00BF   91 91      STA (&91),Y
+     00C1   C8         INY
+.renderMasked4
+     00C2   B1 89      LDA (&89),Y
+     00C4   85 C7      STA &C7
+     00C6   AD 00 38   LDA &3800
+     00C9   31 91      AND (&91),Y
+     00CB   05 C7      ORA &C7
+     00CD   91 91      STA (&91),Y
+     00CF   C8         INY
+.renderMasked5
+     00D0   B1 89      LDA (&89),Y
+     00D2   85 D5      STA &D5
+     00D4   AD 00 38   LDA &3800
+     00D7   31 91      AND (&91),Y
+     00D9   05 D5      ORA &D5
+     00DB   91 91      STA (&91),Y
+     00DD   C8         INY
+.renderMasked6
+     00DE   B1 89      LDA (&89),Y
+     00E0   85 E3      STA &E3
+     00E2   AD 00 38   LDA &3800
+     00E5   31 91      AND (&91),Y
+     00E7   05 E3      ORA &E3
+     00E9   91 91      STA (&91),Y
+     00EB   C8         INY
+.renderMasked7
+     00EC   B1 89      LDA (&89),Y
+     00EE   85 F1      STA &F1
+     00F0   AD 00 38   LDA &3800
+     00F3   31 91      AND (&91),Y
+     00F5   05 F1      ORA &F1
+     00F7   91 91      STA (&91),Y
+     00F9   4C 34 12   JMP &1234
+     00FC   00         BRK
+.renderOverwrite0
+     00FD   B1 89      LDA (&89),Y
+     00FF   91 91      STA (&91),Y
+     0101   C8         INY
+.renderOverwrite1
+     0102   B1 89      LDA (&89),Y
+     0104   91 91      STA (&91),Y
+     0106   C8         INY
+.renderOverwrite2
+     0107   B1 89      LDA (&89),Y
+     0109   91 91      STA (&91),Y
+     010B   C8         INY
+.renderOverwrite3
+     010C   B1 89      LDA (&89),Y
+     010E   91 91      STA (&91),Y
+     0110   C8         INY
+.renderOverwrite4
+     0111   B1 89      LDA (&89),Y
+     0113   91 91      STA (&91),Y
+     0115   C8         INY
+.renderOverwrite5
+     0116   B1 89      LDA (&89),Y
+     0118   91 91      STA (&91),Y
+     011A   C8         INY
+.renderOverwrite6
+     011B   B1 89      LDA (&89),Y
+     011D   91 91      STA (&91),Y
+     011F   C8         INY
+.renderOverwrite7
+     0120   B1 89      LDA (&89),Y
+     0122   91 91      STA (&91),Y
+.stack
+     0124
+.stackTop
+.cls
+     0134   A9 40      LDA #&40
+     0136   85 01      STA &01
+     0138   A2 40      LDX #&40
+     013A   A9 00      LDA #&00
+     013C   85 00      STA &00
+     013E   A8         TAY
+.clsLoop
+     013F   91 00      STA (&00),Y
+     0141   C8         INY
+     0142   D0 FB      BNE &013F
+     0144   E6 01      INC &01
+     0146   CA         DEX
+     0147   D0 F6      BNE &013F
+     0149   60         RTS
+Wasted &BA bytes 
+     0204   59 02
+.enableScreen
+     0206   A9 C0      LDA #&C0
+Macro PCSKIP2:
+     0208   2C
+End macro PCSKIP2
+.disableScreen
+     0209   A9 F0      LDA #&F0
+     020B   8D 67 02   STA &0267
+     020E   60         RTS
+     0258   02
+.irq
+     0259   2C 4D FE   BIT &FE4D
+     025C   70 03      BVS &0261
+.irqBranchDest
+     025E   A5 FC      LDA &FC
+     0260   40         RTI
+.irqScrnTop
+     0261   A9 08      LDA #&08
+     0263   8D 00 FE   STA &FE00
+.irqScreenEnabled
+     0266   A9 F0      LDA #&F0
+     0268   8D 01 FE   STA &FE01
+     026B   A9 06      LDA #&06
+     026D   8D 00 FE   STA &FE00
+     0270   A9 19      LDA #&19
+     0272   8D 01 FE   STA &FE01
+     0275   A9 07      LDA #&07
+     0277   8D 00 FE   STA &FE00
+     027A   A9 FF      LDA #&FF
+     027C   8D 01 FE   STA &FE01
+     027F   A9 04      LDA #&04
+     0281   8D 00 FE   STA &FE00
+     0284   A9 17      LDA #&17
+     0286   8D 01 FE   STA &FE01
+     0289   A9 05      LDA #&05
+     028B   8D 00 FE   STA &FE00
+     028E   A5 15      LDA &15
+     0290   8D 01 FE   STA &FE01
+     0293   A9 0C      LDA #&0C
+     0295   8D 00 FE   STA &FE00
+     0298   A9 07      LDA #&07
+     029A   8D 01 FE   STA &FE01
+     029D   A9 0D      LDA #&0D
+     029F   8D 00 FE   STA &FE00
+     02A2   A9 B0      LDA #&B0
+     02A4   8D 01 FE   STA &FE01
+     02A7   A9 6D      LDA #&6D
+     02A9   8D 5D 02   STA &025D
+     02AC   A9 07      LDA #&07
+     02AE   8D 47 FE   STA &FE47
+     02B1   A5 FC      LDA &FC
+     02B3   40         RTI
+.irqScrnVeryBottom
+     02B4   A9 08      LDA #&08
+     02B6   8D 00 FE   STA &FE00
+     02B9   A9 F0      LDA #&F0
+     02BB   8D 01 FE   STA &FE01
+     02BE   A9 03      LDA #&03
+     02C0   8D 5D 02   STA &025D
+     02C3   A9 2F      LDA #&2F
+     02C5   8D 47 FE   STA &FE47
+     02C8   A5 FC      LDA &FC
+     02CA   40         RTI
+.irqScrnBottom
+     02CB   E6 16      INC &16
+     02CD   A5 17      LDA &17
+     02CF   F0 18      BEQ &02E9
+     02D1   A5 16      LDA &16
+.frameCount
+     02D3   C9 01      CMP #&01
+     02D5   90 12      BCC &02E9
+     02D7   A9 00      LDA #&00
+     02D9   85 17      STA &17
+     02DB   85 16      STA &16
+     02DD   A5 12      LDA &12
+     02DF   85 18      STA &18
+     02E1   A5 13      LDA &13
+     02E3   85 19      STA &19
+     02E5   A5 14      LDA &14
+     02E7   85 15      STA &15
+.noUpdate
+     02E9   A9 06      LDA #&06
+     02EB   8D 00 FE   STA &FE00
+     02EE   A9 01      LDA #&01
+     02F0   8D 01 FE   STA &FE01
+     02F3   A9 07      LDA #&07
+     02F5   8D 00 FE   STA &FE00
+     02F8   A9 09      LDA #&09
+     02FA   8D 01 FE   STA &FE01
+     02FD   A9 05      LDA #&05
+     02FF   8D 00 FE   STA &FE00
+     0302   38         SEC
+     0303   A9 08      LDA #&08
+     0305   E5 15      SBC &15
+     0307   8D 01 FE   STA &FE01
+     030A   A9 04      LDA #&04
+     030C   8D 00 FE   STA &FE00
+     030F   A9 0D      LDA #&0D
+     0311   8D 01 FE   STA &FE01
+     0314   A9 0C      LDA #&0C
+     0316   8D 00 FE   STA &FE00
+     0319   A5 19      LDA &19
+     031B   8D 01 FE   STA &FE01
+     031E   A9 0D      LDA #&0D
+     0320   8D 00 FE   STA &FE00
+     0323   A5 18      LDA &18
+     0325   8D 01 FE   STA &FE01
+     0328   A9 56      LDA #&56
+     032A   8D 5D 02   STA &025D
+     032D   A9 15      LDA #&15
+     032F   8D 47 FE   STA &FE47
+     0332   A5 FC      LDA &FC
+     0334   40         RTI
+.initSprites
+     0335   A2 1F      LDX #&1F
+     0337   86 10      STX &10
+     0339   A9 00      LDA #&00
+     033B   85 11      STA &11
+     033D   18         CLC
+.loop
+     033E   9D 80 3A   STA &3A80,X
+     0341   69 01      ADC #&01
+     0343   CA         DEX
+     0344   10 F8      BPL &033E
+     0346   60         RTS
+.createSpriteAtY
+     0347   A4 10      LDY &10
+     0349   BE 80 3A   LDX &3A80,Y
+     034C   86 00      STX &00
+     034E   C6 10      DEC &10
+     0350   9D 20 39   STA &3920,X
+     0353   9D 00 3A   STA &3A00,X
+     0356   85 01      STA &01
+     0358   A4 11      LDY &11
+.insertLoop
+     035A   88         DEY
+     035B   30 10      BMI &036D
+     035D   BE A0 3A   LDX &3AA0,Y
+     0360   DD 00 3A   CMP &3A00,X
+     0363   B0 08      BCS &036D
+     0365   8A         TXA
+     0366   99 A1 3A   STA &3AA1,Y
+     0369   A5 01      LDA &01
+     036B   90 ED      BCC &035A
+.foundInsertIndex
+     036D   C8         INY
+     036E   A5 00      LDA &00
+     0370   99 A0 3A   STA &3AA0,Y
+     0373   AA         TAX
+     0374   E6 11      INC &11
+     0376   60         RTS
+.destroySprite
+.moveSprite
+.renderSprites
+.start
+     0377   20 34 01   JSR &0134
+     037A   20 06 02   JSR &0206
+     037D   A9 00      LDA #&00
+     037F   85 12      STA &12
+     0381   A9 08      LDA #&08
+     0383   85 13      STA &13
+     0385   A9 00      LDA #&00
+     0387   85 14      STA &14
+.mainLoop
+     0389   E6 12      INC &12
+     038B   D0 02      BNE &038F
+     038D   E6 13      INC &13
+     038F   A5 14      LDA &14
+     0391   18         CLC
+     0392   69 01      ADC #&01
+     0394   29 07      AND #&07
+     0396   85 14      STA &14
+     0398   D0 13      BNE &03AD
+     039A   A5 12      LDA &12
+     039C   18         CLC
+     039D   69 50      ADC #&50
+     039F   85 12      STA &12
+     03A1   A5 13      LDA &13
+     03A3   69 00      ADC #&00
+     03A5   C9 10      CMP #&10
+     03A7   90 02      BCC &03AB
+     03A9   A9 08      LDA #&08
+     03AB   85 13      STA &13
+.sameLine
+     03AD   A9 01      LDA #&01
+     03AF   85 17      STA &17
+.wait
+     03B1   A5 17      LDA &17
+     03B3   D0 FC      BNE &03B1
+     03B5   4C 89 03   JMP &0389
+.spritedata
+     03C0   00
+     03C1   00
+     03C2   00
+     03C3   00
+     03C4   41
+     03C5   41
+     03C6   41
+     03C7   C6
+     03C8   C6
+     03C9   C6
+     03CA   C6
+     03CB   C6
+     03CC   C6
+     03CD   C6
+     03CE   C6
+     03CF   41
+     03D0   41
+     03D1   41
+     03D2   00
+     03D3   00
+     03D4   00
+     03D5   00
+     03D6   00
+     03D7   00
+     03D8   00
+     03D9   00
+     03DA   00
+     03DB   00
+     03DC   00
+     03DD   41
+     03DE   41
+     03DF   41
+     03E0   41
+     03E1   41
+     03E2   41
+     03E3   41
+     03E4   41
+     03E5   00
+     03E6   00
+     03E7   00
+     03E8   00
+     03E9   00
+     03EA   00
+     03EB   00
+     04C0   00
+     04C1   41
+     04C2   C3
+     04C3   C6
+     04C4   CC
+     04C5   CC
+     04C6   CC
+     04C7   CC
+     04C8   CC
+     04C9   CC
+     04CA   CC
+     04CB   CC
+     04CC   CC
+     04CD   CC
+     04CE   CC
+     04CF   CC
+     04D0   CC
+     04D1   CC
+     04D2   C6
+     04D3   C3
+     04D4   41
+     04D5   00
+     04D6   00
+     04D7   00
+     04D8   41
+     04D9   41
+     04DA   C6
+     04DB   C6
+     04DC   C6
+     04DD   CC
+     04DE   CC
+     04DF   CC
+     04E0   CC
+     04E1   CC
+     04E2   CC
+     04E3   CC
+     04E4   CC
+     04E5   C6
+     04E6   C6
+     04E7   C6
+     04E8   41
+     04E9   41
+     04EA   00
+     04EB   00
+     05C0   C3
+     05C1   C3
+     05C2   CC
+     05C3   CC
+     05C4   CC
+     05C5   CC
+     05C6   CC
+     05C7   CC
+     05C8   CC
+     05C9   CC
+     05CA   CC
+     05CB   CC
+     05CC   CC
+     05CD   CC
+     05CE   CC
+     05CF   CC
+     05D0   CC
+     05D1   CC
+     05D2   CC
+     05D3   CC
+     05D4   C3
+     05D5   C3
+     05D6   41
+     05D7   C3
+     05D8   C6
+     05D9   CC
+     05DA   CC
+     05DB   CC
+     05DC   CC
+     05DD   CC
+     05DE   CC
+     05DF   CC
+     05E0   CC
+     05E1   CC
+     05E2   CC
+     05E3   CC
+     05E4   CC
+     05E5   CC
+     05E6   CC
+     05E7   CC
+     05E8   CC
+     05E9   C6
+     05EA   C3
+     05EB   41
+     06C0   82
+     06C1   C3
+     06C2   C9
+     06C3   CC
+     06C4   CE
+     06C5   CF
+     06C6   DF
+     06C7   CF
+     06C8   CD
+     06C9   CC
+     06CA   CC
+     06CB   CC
+     06CC   CC
+     06CD   CC
+     06CE   CC
+     06CF   CC
+     06D0   CC
+     06D1   CC
+     06D2   CC
+     06D3   C9
+     06D4   C3
+     06D5   82
+     06D6   C3
+     06D7   C3
+     06D8   CC
+     06D9   CC
+     06DA   CD
+     06DB   CD
+     06DC   CD
+     06DD   CD
+     06DE   CC
+     06DF   CC
+     06E0   CC
+     06E1   CC
+     06E2   CC
+     06E3   CC
+     06E4   CC
+     06E5   CC
+     06E6   CC
+     06E7   CC
+     06E8   CC
+     06E9   CC
+     06EA   C3
+     06EB   C3
+     07C0   00
+     07C1   00
+     07C2   82
+     07C3   82
+     07C4   C9
+     07C5   C9
+     07C6   CB
+     07C7   CE
+     07C8   CE
+     07C9   CE
+     07CA   CC
+     07CB   CC
+     07CC   CC
+     07CD   CC
+     07CE   CC
+     07CF   C9
+     07D0   C9
+     07D1   C9
+     07D2   82
+     07D3   82
+     07D4   00
+     07D5   00
+     07D6   00
+     07D7   82
+     07D8   C3
+     07D9   C9
+     07DA   CC
+     07DB   CE
+     07DC   EF
+     07DD   CF
+     07DE   CF
+     07DF   CD
+     07E0   CC
+     07E1   CC
+     07E2   CC
+     07E3   CC
+     07E4   CC
+     07E5   CC
+     07E6   CC
+     07E7   CC
+     07E8   C9
+     07E9   C3
+     07EA   82
+     07EB   00
+     08C0   00
+     08C1   00
+     08C2   00
+     08C3   00
+     08C4   00
+     08C5   00
+     08C6   00
+     08C7   82
+     08C8   82
+     08C9   82
+     08CA   82
+     08CB   82
+     08CC   82
+     08CD   82
+     08CE   82
+     08CF   00
+     08D0   00
+     08D1   00
+     08D2   00
+     08D3   00
+     08D4   00
+     08D5   00
+     08D6   00
+     08D7   00
+     08D8   00
+     08D9   00
+     08DA   82
+     08DB   82
+     08DC   82
+     08DD   C9
+     08DE   C9
+     08DF   C9
+     08E0   C9
+     08E1   C9
+     08E2   C9
+     08E3   C9
+     08E4   C9
+     08E5   82
+     08E6   82
+     08E7   82
+     08E8   00
+     08E9   00
+     08EA   00
+     08EB   00
+.entry
+     08EC   D8         CLD
+     08ED   58         CLI
+     08EE   AD B7 FF   LDA &FFB7
+     08F1   85 00      STA &00
+     08F3   AD B8 FF   LDA &FFB8
+     08F6   85 01      STA &01
+     08F8   A0 0A      LDY #&0A
+     08FA   B1 00      LDA (&00),Y
+     08FC   8D 0A 02   STA &020A
+     08FF   C8         INY
+     0900   B1 00      LDA (&00),Y
+     0902   8D 0B 02   STA &020B
+     0905   A9 10      LDA #&10
+     0907   A2 00      LDX #&00
+     0909   20 F4 FF   JSR &FFF4
+     090C   A9 8F      LDA #&8F
+     090E   A2 0C      LDX #&0C
+     0910   A0 FF      LDY #&FF
+     0912   20 F4 FF   JSR &FFF4
+     0915   A9 8C      LDA #&8C
+     0917   A2 00      LDX #&00
+     0919   20 F4 FF   JSR &FFF4
+     091C   A9 13      LDA #&13
+     091E   20 F4 FF   JSR &FFF4
+     0921   78         SEI
+     0922   A2 33      LDX #&33
+     0924   9A         TXS
+     0925   A2 0D      LDX #&0D
+.setCrtcLoop
+     0927   8E 00 FE   STX &FE00
+     092A   BD E5 1B   LDA &1BE5,X
+     092D   8D 01 FE   STA &FE01
+     0930   CA         DEX
+     0931   10 F4      BPL &0927
+     0933   A9 F4      LDA #&F4
+     0935   8D 20 FE   STA &FE20
+     0938   A2 07      LDX #&07
+.setPalLoop
+     093A   BD F3 1B   LDA &1BF3,X
+     093D   8D 21 FE   STA &FE21
+     0940   49 80      EOR #&80
+     0942   8D 21 FE   STA &FE21
+     0945   CA         DEX
+     0946   10 F2      BPL &093A
+     0948   A9 00      LDA #&00
+     094A   8D 34 FE   STA &FE34
+     094D   A2 09      LDX #&09
+     094F   A0 00      LDY #&00
+.relocateLoop
+     0951   B9 00 12   LDA &1200,Y
+     0954   99 18 00   STA &0018,Y
+     0957   C8         INY
+     0958   D0 F7      BNE &0951
+     095A   EE 3B 1B   INC &1B3B
+     095D   EE 3E 1B   INC &1B3E
+     0960   CA         DEX
+     0961   D0 EE      BNE &0951
+     0963   A9 7F      LDA #&7F
+     0965   8D 4E FE   STA &FE4E
+     0968   8D 6E FE   STA &FE6E
+     096B   8D 4D FE   STA &FE4D
+     096E   8D 6D FE   STA &FE6D
+     0971   8D 43 FE   STA &FE43
+     0974   A9 C0      LDA #&C0
+     0976   8D 4E FE   STA &FE4E
+     0979   A9 40      LDA #&40
+     097B   8D 4B FE   STA &FE4B
+     097E   A9 0F      LDA #&0F
+     0980   8D 42 FE   STA &FE42
+     0983   A2 03      LDX #&03
+     0985   8E 40 FE   STX &FE40
+     0988   E8         INX
+     0989   8E 4C FE   STX &FE4C
+     098C   8E 40 FE   STX &FE40
+     098F   E8         INX
+     0990   8E 40 FE   STX &FE40
+     0993   A9 02      LDA #&02
+     0995   8D 4D FE   STA &FE4D
+.waitForVsync
+     0998   2C 4D FE   BIT &FE4D
+     099B   F0 FB      BEQ &0998
+.syncLoop
+     099D   8D 4D FE   STA &FE4D
+     09A0   A2 D1      LDX #&D1
+.outerLoop
+     09A2   A0 25      LDY #&25
+.innerLoop
+     09A4   88         DEY
+     09A5   D0 FD      BNE &09A4
+     09A7   CA         DEX
+     09A8   D0 F8      BNE &09A2
+     09AA   2C 4D FE   BIT &FE4D
+     09AD   D0 EE      BNE &099D
+Macro SAMEPAGE:
+End macro SAMEPAGE
+     09AF   A9 45      LDA #&45
+     09B1   8D 44 FE   STA &FE44
+     09B4   A9 0B      LDA #&0B
+     09B6   8D 45 FE   STA &FE45
+     09B9   A9 FE      LDA #&FE
+     09BB   8D 46 FE   STA &FE46
+     09BE   A9 2F      LDA #&2F
+     09C0   8D 47 FE   STA &FE47
+     09C3   58         CLI
+     09C4   A2 00      LDX #&00
+.loop
+     09C6   8A         TXA
+     09C7   0A         ASL A
+     09C8   2A         ROL A
+     09C9   2A         ROL A
+     09CA   29 03      AND #&03
+     09CC   A8         TAY
+     09CD   B9 13 0A   LDA &0A13,Y
+     09D0   9D 00 38   STA &3800,X
+     09D3   E8         INX
+     09D4   D0 F0      BNE &09C6
+     09D6   A9 00      LDA #&00
+     09D8   AA         TAX
+     09D9   A8         TAY
+.rowTabLoop
+     09DA   9D C0 3A   STA &3AC0,X
+     09DD   48         PHA
+     09DE   98         TYA
+     09DF   9D D9 3A   STA &3AD9,X
+     09E2   A8         TAY
+     09E3   68         PLA
+     09E4   18         CLC
+     09E5   69 80      ADC #&80
+     09E7   C8         INY
+     09E8   C8         INY
+     09E9   90 01      BCC &09EC
+     09EB   C8         INY
+.noCarry
+     09EC   E8         INX
+     09ED   E0 19      CPX #&19
+     09EF   D0 E9      BNE &09DA
+     09F1   A2 02      LDX #&02
+     09F3   A9 00      LDA #&00
+.loop
+     09F5   95 15      STA &15,X
+     09F7   CA         DEX
+     09F8   10 FB      BPL &09F5
+     09FA   4C 77 03   JMP &0377
+.crtcRegs
+     09FD   7F
+     09FE   50
+     09FF   62
+     0A00   28
+     0A01   26
+     0A02   00
+     0A03   19
+     0A04   21
+     0A05   F0
+     0A06   07
+     0A07   20
+     0A08   07
+     0A09   08
+     0A0A   00
+.palette
+     0A0B   03
+     0A0C   17
+     0A0D   26
+     0A0E   32
+     0A0F   45
+     0A10   51
+     0A11   64
+     0A12   70
+.maskVals
+     0A13   FF
+     0A14   AA
+     0A15   55
+     0A16   00
+Saving file 'FLOW'

@@ -1,0 +1,84 @@
+\\ Initialise the sprite system
+\\ No entry parameters
+.initSprites
+{
+    ; Initialise the free list
+    ; It contains indices of free sprite slots, accessed as a stack
+    ; spriteFreePtr is the empty stack pointer
+    ; When it is negative, there is no longer room for any sprites
+    LDX #MaxSprites-1:STX spriteFreePtr
+    LDA #0:STA spriteActiveNum
+    CLC
+    .loop
+    STA SpriteFreeList,X
+    ADC #1
+    DEX
+    BPL loop
+
+    RTS
+}
+
+
+\\ On entry:
+\\      A = sprite y pos
+\\ On exit:
+\\      X = sprite index
+\\      The caller will then have to set:
+\\          SpriteNewX,X
+\\          SpriteNewW,X
+\\          SpriteNewH,X
+\\          SpriteDirtyH,X
+\\          SpriteAddrLo,X
+\\          SpriteAddrHi,X
+.createSpriteAtY
+{
+    spriteIndex = zpTempStart + 0
+    spriteY = zpTempStart + 1
+
+    ; Get the next free sprite index in X
+    LDY spriteFreePtr
+    IF DEBUG:BMI P%:ENDIF      ; hang if no more sprites
+    LDX SpriteFreeList,Y
+    STX spriteIndex
+    DEC spriteFreePtr
+
+    ; Set sprite y and dirtyY values
+    STA SpriteNewY0,X
+    STA SpriteBoxY0,X
+    STA spriteY
+
+    ; Now we have to insert it into the active list in its correct sorted position
+    LDY spriteActiveNum
+    .insertLoop
+    DEY:BMI foundInsertIndex
+    LDX SpriteActiveList,Y
+    CMP SpriteBoxY0,X
+    BCS foundInsertIndex
+    TXA:STA SpriteActiveList+1,Y
+    LDA spriteY
+    BCC insertLoop
+    .foundInsertIndex
+
+    INY
+    LDA spriteIndex
+    STA SpriteActiveList,Y
+    TAX
+
+    INC spriteActiveNum
+    RTS
+}
+
+.destroySprite
+{
+
+}
+
+.moveSprite
+{
+
+}
+
+.renderSprites
+{
+
+}

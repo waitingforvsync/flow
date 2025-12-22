@@ -142,7 +142,32 @@ ENDIF
 	LDA #LO(GameHeight * 8 * 64 - 2):STA &FE46
 	LDA #HI(GameHeight * 8 * 64 - 2):STA &FE47
 	
+	\\ Zero initialize zero page variables
+	{
+		LDX #zpZeroEnd - zpZeroStart - 1
+		LDA #0
+		.loop
+		STA zpZeroStart,X
+		DEX
+		BPL loop
+	}
+
 	CLI
+
+	\\ Build mask table
+	\\ 00xxxxxx = mask &FF
+	\\ 01xxxxxx = mask &AA
+	\\ 10xxxxxx = mask &55
+	\\ 11xxxxxx = mask &00
+	{
+		LDX #0
+		.loop
+		TXA:ASL A:ROL A:ROL A:AND #3:TAY
+		LDA maskVals,Y
+		STA MaskTab,X
+		INX
+		BNE loop
+	}
 
 IF NOT(SMALL_SCREEN)
 	\\ Build row multiplication table
@@ -185,4 +210,7 @@ ENDIF
 		
 	.palette
 		EQUB &03, &17, &26, &32, &45, &51, &64, &70
+
+	.maskVals
+		EQUB &FF, &AA, &55, &00
 }

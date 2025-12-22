@@ -14,15 +14,45 @@ ENDIF
 
 ScreenHeight = GameHeight + StatusHeight
 ScreenHSyncPos = 98 - (80 - ScreenWidth) DIV 2
-ScreenVSyncPos = 35 - (32 - ScreenHeight) DIV 2
+ScreenVSyncPos = 35 - (30 - ScreenHeight) DIV 2
 ScreenStatusAddr = ScreenBaseAddr - ScreenWidth * StatusHeight * 8
 VSyncPulseWidth = 2
 
 \\ Other tables
 
-IF NOT(SMALL_SCREEN)
-	RowTabLo = ScreenStatusAddr - 25
-	RowTabHi = RowTabLo - 25
+IF SMALL_SCREEN
+	Base = &5000
 ELSE
-	RowTabHi = ScreenStatusAddr
+	Base = &3800
 ENDIF
+
+ORG Base
+.MaskTab			SKIP 256
+
+MaxSprites = 32
+\\ Per-sprite data
+.SpriteNewX0		SKIP MaxSprites
+.SpriteNewY0		SKIP MaxSprites
+.SpriteNewX1		SKIP MaxSprites
+.SpriteNewY1		SKIP MaxSprites
+.SpriteOldX0		SKIP MaxSprites
+.SpriteOldY0		SKIP MaxSprites
+.SpriteOldX1		SKIP MaxSprites
+.SpriteOldY1		SKIP MaxSprites
+.SpriteBoxY0		SKIP MaxSprites
+.SpriteBoxY1		SKIP MaxSprites
+.SpriteAddrLo		SKIP MaxSprites
+.SpriteAddrHi		SKIP MaxSprites
+
+\\ List of free sprite indices
+.SpriteFreeList		SKIP MaxSprites
+
+\\ List of active sprite indices, sorted by dirty y
+.SpriteActiveList	SKIP MaxSprites
+
+
+IF NOT(SMALL_SCREEN)
+.RowTabLo			SKIP 25
+.RowTabHi			SKIP 25
+ENDIF
+
