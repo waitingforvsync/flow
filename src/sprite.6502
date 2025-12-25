@@ -92,7 +92,7 @@
 }
 
 
-.noSprites
+.renderSpriteFinished
     RTS
 
 .renderSprites
@@ -104,9 +104,6 @@
     spriteRenderNum = zpTempStart + 4
     rowAddr = zpTempStart + 5
     tempIndex = zpTempStart + 7
-
-    ; If there are no active sprites, we have nothing to do
-    LDA spriteActiveNum:BEQ noSprites
 
     ; Initialise render list
     LDA #0:STA spriteRenderNum
@@ -128,7 +125,9 @@
     ; We take the next entry from the active list and skip straight to that row.
     ; The first time entering the loop, we will always come here
     
-    LDY spriteActiveNum
+    LDY activeListIndex
+    CPY spriteActiveNum:BEQ renderSpriteFinished
+
     LDX SpriteActiveList,Y      ; get next sprite index from active list
     LDA SpriteRow0,X            ; get top bounds
     STA rowStart                ; use that as the row start
@@ -147,8 +146,8 @@
     LDA rowStart                \ C always clear
     ADC #8:STA rowEnd
 
-    TXA:STA SpriteRenderList
-    INC spriteRenderNum
+    TXA:STA SpriteRenderList    ; list is empty, so write element 0 directly
+    INC spriteRenderNum         ; spriteRenderNum=1
     JMP addNewEntries
 
     .removeOldEntries
@@ -209,5 +208,22 @@
     ; ADD TO RENDER LIST IN SORTED POSITION
     ;--------------------------------------
 
+    LDY activeListIndex
+    CPY spriteActiveNum:BEQ renderSpriteFinished2
+
+    LDA rowEnd
+    .addLoop
+    LDX SpriteActiveList,Y      ; get next sprite index from active list
+    CMP SpriteRow0,X            ; are the top bounds less than the current row end?
+    BCS processRenderList       ; no - nothing more to add
+
+    TXA
+
+    .processRenderList
+
+    ; PROCESS RENDER LIST
+    ;--------------------
+
+    .renderSpriteFinished2
     RTS
 }
