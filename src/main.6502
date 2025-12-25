@@ -4,7 +4,23 @@
 	JSR enableScreen
 	LDA #LO(ScreenBaseAddr DIV 8):STA reqScrn
 	LDA #HI(ScreenBaseAddr DIV 8):STA reqScrn+1
+	LDA #LO(ScreenBaseAddr):STA scrnBase
+	LDA #HI(ScreenBaseAddr):STA scrnBase+1
 	LDA #0:STA reqLine
+
+	LDA #6*8:LDY #22
+	JSR createSpriteAtY
+	LDA #10:STA SpriteNewX0,X:STA SpriteOldX0,X
+	LDA #16:STA SpriteNewX1,X:STA SpriteOldX1,X
+	LDA #LO(spritedata):STA SpriteAddrLo,X
+	LDA #HI(spritedata):STA SpriteAddrHi,X
+
+	LDA #12*8:LDY #22
+	JSR createSpriteAtY
+	LDA #40:STA SpriteNewX0,X:STA SpriteOldX0,X
+	LDA #46:STA SpriteNewX1,X:STA SpriteOldX1,X
+	LDA #LO(spritedata):STA SpriteAddrLo,X
+	LDA #HI(spritedata):STA SpriteAddrHi,X
 
 .mainLoop
 ;	LDA #98

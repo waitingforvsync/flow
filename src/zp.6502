@@ -15,7 +15,7 @@ GUARD Base
 .spriteActiveNum	SKIP 1
 .reqScrn			SKIP 2
 .reqLine			SKIP 1
-.spriteRenderMask	SKIP 1
+.scrnBase			SKIP 2
 
 \\ Zero page variables initialized to zero at startup
 
@@ -31,9 +31,9 @@ SKIPTO &80
 .beginning
 .irqScrn			EQUW (ScreenBaseAddr DIV 8)
 
-; 6 more bytes free here
+; 5 more bytes free here
 
-SKIPTO &88
+SKIPTO &87
 
 
 \\ Masked sprite routine in zero page, for speed
@@ -78,6 +78,7 @@ SKIPTO &88
 	maskIndex7 = P%+1:LDA MaskTab
 	AND (screen),Y:ORA maskIndex7:STA (screen),Y
 
+	CLC
 	JMP nextSpriteBlock
 
 
@@ -91,7 +92,12 @@ SKIPTO &FC
 \\	(sprite) = sprite data
 \\	(screen) = screen address
 \\	spriteLine = screen/sprite offset
+\\ On exit:
+\\  C clear, X=0
 .renderSpriteRow
+
+	spriteRenderMask = zpTempStart + 0
+
 	spriteLine = P%+1:LDY #0
 	LSR spriteRenderMask
 	BCC renderOverwrite7
@@ -123,11 +129,13 @@ SKIPTO &FC
 	DEX
 	BEQ spriteFinished
 
+	; sprite data format has column data &100 bytes apart
 	INC sprite+1
 
-	CLC
+	; C already clear, either from overwrite path, or explicitly from masked path
 	LDA screen:ADC #8:STA screen
 	BCC renderSpriteRow
+	CLC
 	INC screen+1
 	BPL renderSpriteRow
 	LDA #HI(ScreenBaseAddr):STA screen+1
@@ -137,8 +145,45 @@ SKIPTO &FC
 	RTS
 
 
+\\ Tables for configuring the height of the plotted sprite
+\\ Height in X (1-8):
+\\		LDA spriteMaskedRoutines,X:STA renderSpriteBranchDest+1
+\\		LDA spriteOverwriteRoutines,X:STA renderSpriteBranchDest-1
+\\ For heights<>8, restore to default aferwards with:
+\\		LDA #LO(renderMasked0):STA renderSpriteBranchDest+1
+\\		LDA #renderOverwrite0 - renderSpriteBranchDest:STA renderSpriteBranchDest-1
+spriteMaskedRoutines = P%-1
+	EQUB LO(renderMasked7)
+	EQUB LO(renderMasked6)
+	EQUB LO(renderMasked5)
+	EQUB LO(renderMasked4)
+	EQUB LO(renderMasked3)
+	EQUB LO(renderMasked2)
+	EQUB LO(renderMasked1)
+	EQUB LO(renderMasked0)
+
+spriteOverwriteRoutines = P%-1
+	EQUB renderOverwrite7 - renderSpriteBranchDest
+	EQUB renderOverwrite6 - renderSpriteBranchDest
+	EQUB renderOverwrite5 - renderSpriteBranchDest
+	EQUB renderOverwrite4 - renderSpriteBranchDest
+	EQUB renderOverwrite3 - renderSpriteBranchDest
+	EQUB renderOverwrite2 - renderSpriteBranchDest
+	EQUB renderOverwrite1 - renderSpriteBranchDest
+	EQUB renderOverwrite0 - renderSpriteBranchDest
+
+
+\\ Erase a character aligned sprite row.
+\\ On entry:
+\\  X = number of character blocks width
+\\	(screen) = screen address
+\\	eraseLine = screen/sprite offset
 .renderErase
+	CLC
+	LDA #0
+	.renderEraseLoop
 	eraseLine = P%+1:LDY #0
+	.renderEraseDest
 	JMP renderErase0
 
 \\ Erase block, assuming A=0
@@ -157,25 +202,36 @@ SKIPTO &FC
 .renderErase6
 	STA (screen),Y:INY
 .renderErase7
+	SAMEPAGE renderErase0
 	STA (screen),Y
 
 	DEX
 	BEQ spriteFinished
 
-	CLC
+	; We maintain C clear throughout this routine
 	LDA screen:ADC #8:STA screen
-	BCC renderErase
+	BCC renderEraseLoop
+	CLC
 	INC screen+1
-	BPL renderErase
+	BPL renderEraseLoop
 	LDA #HI(ScreenBaseAddr):STA screen+1
-	BNE renderErase
+	BNE renderEraseLoop
 
 
-\\ Stack
-
-.stack
-	SKIP 16
-.stackTop
+\\ Tables for configuring the height of the erased block
+\\ Height in X (1-8):
+\\		LDA eraseRoutines,X:STA renderEraseDest+1
+\\ Afterwards set back to default (8):
+\\		LDA #LO(renderErase0):STA renderEraseDest+1
+eraseRoutines = P%-1
+	EQUB LO(renderErase7)
+	EQUB LO(renderErase6)
+	EQUB LO(renderErase5)
+	EQUB LO(renderErase4)
+	EQUB LO(renderErase3)
+	EQUB LO(renderErase2)
+	EQUB LO(renderErase1)
+	EQUB LO(renderErase0)
 
 
 
@@ -183,22 +239,19 @@ SKIPTO &FC
 
 .cls
 {
-	clsWrite = zpTempStart
-
 	IF SMALL_SCREEN
-		LDA #&58:STA clsWrite+1
+		LDA #&58:STA clsLoop+2
 		LDX #&28
 	ELSE
-		LDA #&40:STA clsWrite+1
-		LDX #&40
+		LDA #&40:STA clsLoop+2
+		TAX
 	ENDIF
 
-	LDA #0:STA clsWrite
-	TAY
+	LDA #0:TAY
 	.clsLoop
-	STA (clsWrite),Y
+	STA &FF00,Y
 	INY:BNE clsLoop
-	INC clsWrite+1
+	INC clsLoop+2
 	DEX:BNE clsLoop
 	RTS
 }
@@ -211,6 +264,14 @@ SKIPTO &FC
 	LDA #&F0
 	STA irqScreenEnabled+1
 	RTS
+
+
+\\ Stack
+
+.stack
+	SKIP 16
+.stackTop
+
 
 
 

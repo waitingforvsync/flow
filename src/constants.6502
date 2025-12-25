@@ -31,16 +31,20 @@ ORG Base
 
 MaxSprites = 32
 \\ Per-sprite data
+;; New bounds of sprite [X0,X1) [Y0,Y1)
 .SpriteNewX0		SKIP MaxSprites
 .SpriteNewY0		SKIP MaxSprites
 .SpriteNewX1		SKIP MaxSprites
 .SpriteNewY1		SKIP MaxSprites
+;; Old bounds of sprite [X0,X1) [Y0,Y1)
 .SpriteOldX0		SKIP MaxSprites
 .SpriteOldY0		SKIP MaxSprites
 .SpriteOldX1		SKIP MaxSprites
 .SpriteOldY1		SKIP MaxSprites
-.SpriteBoxY0		SKIP MaxSprites
-.SpriteBoxY1		SKIP MaxSprites
+;; Span of union of new and old bounds in character rows
+.SpriteRow0			SKIP MaxSprites
+.SpriteRow1			SKIP MaxSprites
+;; Sprite data address
 .SpriteAddrLo		SKIP MaxSprites
 .SpriteAddrHi		SKIP MaxSprites
 
@@ -49,6 +53,9 @@ MaxSprites = 32
 
 \\ List of active sprite indices, sorted by dirty y
 .SpriteActiveList	SKIP MaxSprites
+
+\\ List of sprite indices to render, sorted by sprite index
+.SpriteRenderList	SKIP MaxSprites
 
 
 IF NOT(SMALL_SCREEN)
