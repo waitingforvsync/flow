@@ -211,13 +211,31 @@
     LDY activeListIndex
     CPY spriteActiveNum:BEQ renderSpriteFinished2
 
-    LDA rowEnd
     .addLoop
+    LDA rowEnd
     LDX SpriteActiveList,Y      ; get next sprite index from active list
     CMP SpriteRow0,X            ; are the top bounds less than the current row end?
     BCS processRenderList       ; no - nothing more to add
 
-    TXA
+    STX tempIndex
+    LDX spriteRenderNum
+    .insertLoop
+    DEX:BMI gotInsertPosition
+    LDA SpriteRenderList,X
+    CMP tempIndex
+    BCC gotInsertPosition
+    STA SpriteRenderList+1,X
+    BCS insertLoop
+
+    .gotInsertPosition
+    INX
+    LDA tempIndex
+    STA SpriteRenderList,X
+    INC spriteRenderNum
+
+    INY
+    CPY spriteActiveNum
+    BNE addLoop
 
     .processRenderList
 

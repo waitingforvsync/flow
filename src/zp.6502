@@ -25,7 +25,7 @@ GUARD Base
 .reqUpdate			EQUB 0
 .zpZeroEnd
 
-\\ A special temporary location which can be used by subroutines
+\\ A special temporary location which can be used by long subroutines.
 \\ It provides a handy RTS in its operand so the routine can conditionally exit
 \\ without out-of-range problems
 SKIPTO &60

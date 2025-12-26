@@ -36,5 +36,7 @@
 	
 	LDA #1:STA reqUpdate
 	.wait LDA reqUpdate:BNE wait
+
+	JSR renderSprites
 	
 	JMP mainLoop
