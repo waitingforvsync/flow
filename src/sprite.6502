@@ -116,8 +116,10 @@
     ; If there's something in the render list then either we have sprite rows remaining
     ; which need rendering, or we need to remove the entries from the list if we've 
     ; passed their lower bound.
+    ; After that we'll walk the active list to add any other entries which need to be added
+    ; to the render list.
 
-    LDA spriteRenderNum:BNE removeOldEntries
+    LDA spriteRenderNum:BNE processNextRow
 
     ; SKIP TO NEXT OCCUPIED ROW (RENDER LIST EMPTY)
     ;----------------------------------------------
@@ -125,39 +127,41 @@
     ; We take the next entry from the active list and skip straight to that row.
     ; The first time entering the loop, we will always come here
     
+    ; If there's nothing left in the active list, we have finished
     LDY activeListIndex
     CPY spriteActiveNum:BEQ renderSpriteFinished
 
     LDX SpriteActiveList,Y      ; get next sprite index from active list
-    LDA SpriteRow0,X            ; get top bounds
+    INC activeListIndex         ; consume active list entry
+    LDA SpriteRow0,X            ; get sprite top bounds
     STA rowStart                ; use that as the row start
 
+    ; Calculate this row's screen address (taking into account the hardware scroll base)
     IF SMALL_SCREEN
         LSR A:LSR A             \ C always clear
-        ADC scrnBase+1:STA rowAddr+1
+        ADC scrnBase+1:BPL P%+4:SBC #&27:STA rowAddr+1
         LDA scrnBase:STA rowAddr
     ELSE
         LSR A:LSR A:LSR A       \ C always clear
         TAY
         LDA scrnBase:ADC RowTabLo,Y:STA rowAddr
-        LDA scrnBase+1:ADC RowTabHi,Y:STA rowAddr+1
+        LDA scrnBase+1:ADC RowTabHi,Y:BPL P%+4:SBC #&3F:STA rowAddr+1
     ENDIF
 
-    LDA rowStart                \ C always clear
+    CLC:LDA rowStart
     ADC #8:STA rowEnd
 
     TXA:STA SpriteRenderList    ; list is empty, so write element 0 directly
     INC spriteRenderNum         ; spriteRenderNum=1
     JMP addNewEntries
 
-    .removeOldEntries
 
-    ; REMOVE FROM RENDER LIST
-    ;------------------------
-    ; If there are entries in the render list, see if any of them need to be removed
-    ; i.e. when the sprite dirty bounds don't overlap this row
+    ; PROCESS NEXT ROW
+    ;-----------------
 
-    ; Move to next row
+    .processNextRow
+
+    ; Set start/end for next row
     LDA rowEnd:STA rowStart
     CLC:ADC #8:STA rowEnd
 
@@ -165,8 +169,13 @@
         LDA rowAddr+1:ADC #2:BPL P%+4:SBC #&27:STA rowAddr+1
     ELSE
         LDA rowAddr:ADC #LO(ScreenWidth * 8):STA rowAddr
-        LDA rowAddr+1:ADC #HI(ScreenWidth *8):BPL P%+4:SBC #&40:STA rowAddr+1
+        LDA rowAddr+1:ADC #HI(ScreenWidth *8):BPL P%+4:SBC #&3F:STA rowAddr+1
     ENDIF
+
+    ; REMOVE FROM RENDER LIST
+    ;------------------------
+    ; If there are entries in the render list, see if any of them need to be removed
+    ; i.e. when the sprite dirty bounds don't overlap this row
 
     ; Iterate render list (sprite index order)
     ; If we find a sprite whose Row1 (bottom bounds) is less than or equal to the current row start,
@@ -187,6 +196,10 @@
     ; items down until the end. Hence this is a different loop to above.
     .needToRemove
     STY tempIndex               ; Y is the index to element to remove
+    
+    ; Skip past any contiguous entries which need to be removed.
+    ; We have already skipped the first one
+    ; At the end of this loop, Y points to the next valid entry in the render list
     .removeLoop2
     INY:CPY spriteRenderNum
     BEQ removedAll
@@ -194,45 +207,57 @@
     CMP SpriteRow1,X
     BCS removeLoop2
 
+    ; X is the valid entry in the render list. Copy it down to the new position.
     TXA:LDX tempIndex
     STA SpriteRenderList,X
-    LDA rowStart
-    INC tempIndex
+    LDA rowStart        ; corrupted A above, so get it back
+    INC tempIndex       ; tempIndex is the new end of the list
     BNE removeLoop2
 
     .removedAll
     LDA tempIndex:STA spriteRenderNum
 
-    .addNewEntries
 
     ; ADD TO RENDER LIST IN SORTED POSITION
     ;--------------------------------------
 
-    LDY activeListIndex
-    CPY spriteActiveNum:BEQ renderSpriteFinished2
+    .addNewEntries
 
+    ; If we have consumed the entire active list, there is nothing more to add.
+    ; However we don't exit yet, because the render list may still have residual items.
+    LDY activeListIndex
+    CPY spriteActiveNum:BEQ processRenderList
+
+    ; The active list is sorted by Y.
+    ; So we iterate through it, adding zero or more items, until we encounter one whose
+    ; top bounds is greater or equal to the current row end.
     .addLoop
     LDA rowEnd
     LDX SpriteActiveList,Y      ; get next sprite index from active list
     CMP SpriteRow0,X            ; are the top bounds less than the current row end?
     BCS processRenderList       ; no - nothing more to add
 
+    ; The index we want to add to the render list is in X.
+    ; Add it in index-sorted position by starting at the end of the render list
+    ; and bubbling items up one place until we find the final resting place.
     STX tempIndex
     LDX spriteRenderNum
     .insertLoop
-    DEX:BMI gotInsertPosition
+    DEX:BMI gotInsertPosition    ; we reached the start of the list, so it must go here
     LDA SpriteRenderList,X
     CMP tempIndex
     BCC gotInsertPosition
     STA SpriteRenderList+1,X
     BCS insertLoop
 
+    ; Add the sprite index in the right position
     .gotInsertPosition
     INX
     LDA tempIndex
     STA SpriteRenderList,X
     INC spriteRenderNum
 
+    ; Keep on iterating the active list until we hit the end
     INY
     CPY spriteActiveNum
     BNE addLoop
@@ -242,6 +267,9 @@
     ; PROCESS RENDER LIST
     ;--------------------
 
-    .renderSpriteFinished2
+    LDX #0
+    .renderLoop
+    
+
     RTS
 }

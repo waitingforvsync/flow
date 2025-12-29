@@ -30,6 +30,8 @@ ORG Base
 .MaskTab			SKIP 256
 
 MaxSprites = 32
+MaxActiveSprites = 32
+
 \\ Per-sprite data
 ;; New bounds of sprite [X0,X1) [Y0,Y1)
 .SpriteNewX0		SKIP MaxSprites
@@ -52,10 +54,10 @@ MaxSprites = 32
 .SpriteFreeList		SKIP MaxSprites
 
 \\ List of active sprite indices, sorted by dirty y
-.SpriteActiveList	SKIP MaxSprites
+.SpriteActiveList	SKIP MaxActiveSprites
 
 \\ List of sprite indices to render, sorted by sprite index
-.SpriteRenderList	SKIP MaxSprites
+.SpriteRenderList	SKIP MaxActiveSprites
 
 
 IF NOT(SMALL_SCREEN)

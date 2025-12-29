@@ -8,14 +8,21 @@
 	LDA #HI(ScreenBaseAddr):STA scrnBase+1
 	LDA #0:STA reqLine
 
-	LDA #6*8:LDY #22
+	LDA #8:LDY #22
 	JSR createSpriteAtY
 	LDA #10:STA SpriteNewX0,X:STA SpriteOldX0,X
 	LDA #16:STA SpriteNewX1,X:STA SpriteOldX1,X
 	LDA #LO(spritedata):STA SpriteAddrLo,X
 	LDA #HI(spritedata):STA SpriteAddrHi,X
 
-	LDA #12*8:LDY #22
+	LDA #48:LDY #22
+	JSR createSpriteAtY
+	LDA #40:STA SpriteNewX0,X:STA SpriteOldX0,X
+	LDA #46:STA SpriteNewX1,X:STA SpriteOldX1,X
+	LDA #LO(spritedata):STA SpriteAddrLo,X
+	LDA #HI(spritedata):STA SpriteAddrHi,X
+
+	LDA #16:LDY #22
 	JSR createSpriteAtY
 	LDA #40:STA SpriteNewX0,X:STA SpriteOldX0,X
 	LDA #46:STA SpriteNewX1,X:STA SpriteOldX1,X
@@ -23,11 +30,8 @@
 	LDA #HI(spritedata):STA SpriteAddrHi,X
 
 .mainLoop
-;	LDA #98
-;	.waitforkey STA &FE4F:BIT &FE4F:BPL waitforkey
-;	.waitforkey2 STA &FE4F:BIT &FE4F:BMI waitforkey2
 
-	INC reqScrn:BNE P%+4:INC reqScrn+1
+;	INC reqScrn:BNE P%+4:INC reqScrn+1
 	LDA reqLine:CLC:ADC #1:AND #7:STA reqLine
 	BNE sameLine
 	LDA reqScrn:CLC:ADC #ScreenWidth:STA reqScrn
