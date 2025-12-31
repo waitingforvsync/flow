@@ -74,8 +74,8 @@
 
     ; Now write Y1 and Row1
     LDA SpriteNewY0,X
-    CLC:ADC spriteHeight:ADC #7:STA SpriteNewY1,X:STA SpriteOldY1,X
-    AND #&F8
+    CLC:ADC spriteHeight:STA SpriteNewY1,X:STA SpriteOldY1,X
+    ADC #7:AND #&F8
     STA SpriteRow1,X
 
     INC spriteActiveNum
@@ -107,7 +107,7 @@
     spriteRenderNum = zpTempStart + 4
     rowAddr = zpTempStart + 5
     tempIndex = zpTempStart + 7
-    renderMasks = zpTempStart + 8
+    occupancyMask = zpTempStart + 8
     ; zpTempStart + 18
 
     ; ------------------- rowStart
@@ -169,10 +169,10 @@
     CLC:LDA rowStart
     ADC #8:STA rowEnd
 
-    ; Calculate rowAddr+X*8
+    ; Calculate X*8
     LDA SpriteNewX0,X:ASL A:ASL A:ROL A:ROL A:TAY:AND #&F0:ROR A
-    ADC rowAddr:STA SpriteScrnLo,X
-    TYA:AND #3:ADC rowAddr+1:BPL P%+4:SBC #HI(ScreenSize)-1:STA SpriteScrnHi,X
+    STA SpriteColumnLo,X
+    TYA:AND #3:STA SpriteColumnHi,X
 
     TXA:STA SpriteRenderList    ; list is empty, so write element 0 directly
     INC spriteRenderNum         ; spriteRenderNum=1
@@ -260,10 +260,10 @@
     CMP rowEnd                  ; are the top bounds less than the current row end?
     BCS processRenderList       ; no - nothing more to add
 
-    ; Calculate rowAddr+X*8
+    ; Calculate X*8
     LDA SpriteNewX0,X:ASL A:ASL A:ROL A:ROL A:STA tempIndex:AND #&F0:ROR A
-    ADC rowAddr:STA SpriteScrnLo,X
-    LDA tempIndex:AND #3:ADC rowAddr+1:BPL P%+4:SBC #HI(ScreenSize)-1:STA SpriteScrnHi,X
+    STA SpriteColumnLo,X
+    LDA tempIndex:AND #3:STA SpriteColumnHi,X
 
     ; The index we want to add to the render list is in X.
     ; Add it in index-sorted position by starting at the end of the render list
@@ -303,18 +303,33 @@
     LDX SpriteRenderList,Y
 
     ; Fetch and update cached screen address
-    LDA SpriteScrnLo,X:STA screen:CLC:ADC #LO(ScreenWidth * 8):STA SpriteScrnLo,X
-    LDA SpriteScrnHi,X:STA screen+1:ADC #HI(ScreenWidth * 8):BPL P%+4:SBC #HI(ScreenSize)-1:STA SpriteScrnHi,X
+    ; C clear from CPY spriteRenderNum
+    LDA rowEnd:SBC SpriteNewY0,X:CMP #8:BCS alignedTop:TAY:EOR #7:BEQ alignedTop
+    JMP (&FFFC) ; TODO start unaligned sprite rows
+    .alignedTop
+    CLC
+    LDA rowAddr:ADC SpriteColumnLo,X:STA screen
+    LDA rowAddr+1:ADC SpriteColumnHi,X:BPL P%+4:SBC #HI(ScreenSize)-1:STA screen+1
 
     SEC:LDA rowStart:SBC SpriteNewY0,X:CLC
     ADC SpriteAddrLo,X:STA sprite
     LDA SpriteAddrHi,X:STA sprite+1
     LDA #0:STA spriteLine:STA spriteRenderMask
 
+    ; handle partial end sprite blocks
+    SEC:LDA SpriteNewY1,X:SBC rowStart:CMP #8:BCS fullSpriteBlock
+    TAY
+	LDA spriteMaskedRoutines,Y:STA renderSpriteBranchDest+1
+	LDA spriteOverwriteRoutines,Y:STA renderSpriteBranchDest-1
+    .fullSpriteBlock
+
     LDA SpriteNewX1,X:SEC:SBC SpriteNewX0,X:TAX
     LDA #1:STA &FE21
     JSR renderSpriteRow
     LDA #3:STA &FE21
+
+	LDA #LO(renderMasked0):STA renderSpriteBranchDest+1
+	LDA #renderOverwrite0 - renderSpriteBranchDest:STA renderSpriteBranchDest-1
 
     LDY tempIndex
     INY
