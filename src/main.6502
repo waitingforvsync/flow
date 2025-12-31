@@ -8,6 +8,8 @@
 	LDA #HI(ScreenBaseAddr):STA scrnBase+1
 	LDA #0:STA reqLine
 
+	JSR initSprites
+
 	LDA #8:LDY #22
 	JSR createSpriteAtY
 	LDA #10:STA SpriteNewX0,X:STA SpriteOldX0,X
@@ -15,28 +17,41 @@
 	LDA #LO(spritedata):STA SpriteAddrLo,X
 	LDA #HI(spritedata):STA SpriteAddrHi,X
 
-	LDA #48:LDY #22
+	LDA #32:LDY #22
 	JSR createSpriteAtY
 	LDA #40:STA SpriteNewX0,X:STA SpriteOldX0,X
 	LDA #46:STA SpriteNewX1,X:STA SpriteOldX1,X
+	LDA #LO(spritedata):STA SpriteAddrLo,X
+	LDA #HI(spritedata):STA SpriteAddrHi,X
+
+	LDA #64:LDY #22
+	JSR createSpriteAtY
+	LDA #60:STA SpriteNewX0,X:STA SpriteOldX0,X
+	LDA #66:STA SpriteNewX1,X:STA SpriteOldX1,X
 	LDA #LO(spritedata):STA SpriteAddrLo,X
 	LDA #HI(spritedata):STA SpriteAddrHi,X
 
 	LDA #16:LDY #22
 	JSR createSpriteAtY
-	LDA #40:STA SpriteNewX0,X:STA SpriteOldX0,X
-	LDA #46:STA SpriteNewX1,X:STA SpriteOldX1,X
+	LDA #0:STA SpriteNewX0,X:STA SpriteOldX0,X
+	LDA #6:STA SpriteNewX1,X:STA SpriteOldX1,X
 	LDA #LO(spritedata):STA SpriteAddrLo,X
 	LDA #HI(spritedata):STA SpriteAddrHi,X
+
+	; check
+	LDA SpriteActiveList+0:CMP #0:BEQ mainLoop
+	LDA SpriteActiveList+1:CMP #2:BEQ mainLoop
+	LDA SpriteActiveList+2:CMP #1:BEQ mainLoop
+;	JMP (&FFFC)
 
 .mainLoop
 
 ;	INC reqScrn:BNE P%+4:INC reqScrn+1
-	LDA reqLine:CLC:ADC #1:AND #7:STA reqLine
-	BNE sameLine
-	LDA reqScrn:CLC:ADC #ScreenWidth:STA reqScrn
-	LDA reqScrn+1:ADC #0:CMP #&10:BCC P%+4:LDA #HI(ScreenBaseAddr DIV 8):STA reqScrn+1
-	.sameLine
+;	LDA reqLine:CLC:ADC #1:AND #7:STA reqLine
+;	BNE sameLine
+;	LDA reqScrn:CLC:ADC #ScreenWidth:STA reqScrn
+;	LDA reqScrn+1:ADC #0:CMP #&10:BCC P%+4:LDA #HI(ScreenBaseAddr DIV 8):STA reqScrn+1
+;	.sameLine
 	
 	LDA #1:STA reqUpdate
 	.wait LDA reqUpdate:BNE wait

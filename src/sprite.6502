@@ -15,6 +15,9 @@
     DEX
     BPL loop
 
+    ; Default sprite routines - plot an entire 8 line block
+	LDA #LO(renderMasked0):STA renderSpriteBranchDest+1
+	LDA #renderOverwrite0 - renderSpriteBranchDest:STA renderSpriteBranchDest-1
     RTS
 }
 
@@ -71,7 +74,7 @@
 
     ; Now write Y1 and Row1
     LDA SpriteNewY0,X
-    CLC:ADC spriteHeight:STA SpriteNewY1,X:STA SpriteOldY1,X
+    CLC:ADC spriteHeight:ADC #7:STA SpriteNewY1,X:STA SpriteOldY1,X
     AND #&F8
     STA SpriteRow1,X
 
@@ -232,9 +235,9 @@
     ; So we iterate through it, adding zero or more items, until we encounter one whose
     ; top bounds is greater or equal to the current row end.
     .addLoop
-    LDA rowEnd
     LDX SpriteActiveList,Y      ; get next sprite index from active list
-    CMP SpriteRow0,X            ; are the top bounds less than the current row end?
+    LDA SpriteRow0,X  
+    CMP rowEnd                  ; are the top bounds less than the current row end?
     BCS processRenderList       ; no - nothing more to add
 
     ; The index we want to add to the render list is in X.
@@ -259,6 +262,7 @@
 
     ; Keep on iterating the active list until we hit the end
     INY
+    STY activeListIndex
     CPY spriteActiveNum
     BNE addLoop
 
@@ -267,9 +271,30 @@
     ; PROCESS RENDER LIST
     ;--------------------
 
-    LDX #0
-    .renderLoop
-    
+    LDY #0
+    .renderRowLoop
+    CPY spriteRenderNum:BEQ finishedRenderRow
+    STY tempIndex
+    LDX SpriteRenderList,Y
 
-    RTS
+    LDA #0:STA screen+1
+    LDA SpriteNewX0,X:ASL A
+    ASL A:ROL screen+1
+    ASL A:ROL screen+1
+    ADC rowAddr:STA screen
+    LDA screen+1:ADC rowAddr+1:BPL P%+4:SBC #&3F:STA screen+1
+
+    LDA SpriteAddrLo,X:STA sprite
+    LDA SpriteAddrHi,X:STA sprite+1
+    LDA #0:STA spriteLine:STA spriteRenderMask
+
+    LDA SpriteNewX1,X:SEC:SBC SpriteNewX0,X:TAX
+    JSR renderSpriteRow
+
+    LDY tempIndex
+    INY
+    BNE renderRowLoop
+
+    .finishedRenderRow
+    JMP rowLoop
 }
