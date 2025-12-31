@@ -341,6 +341,7 @@ SKIPTO &258
 	LDA #13:STA &FE00:LDA irqScrn:STA &FE01
 	LDA #(irqScrnVeryBottom-irqBranchDest):STA irqBranchDest-1
 	LDA #HI((39 - 4 - GameHeight) * 8 * 64 - 2):STA &FE47
+	LDA #&03:STA &FE21
 	LDA &FC
 	RTI
 

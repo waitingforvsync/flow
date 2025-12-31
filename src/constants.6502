@@ -49,6 +49,10 @@ MaxActiveSprites = 32
 ;; Sprite data address
 .SpriteAddrLo		SKIP MaxSprites
 .SpriteAddrHi		SKIP MaxSprites
+;; Sprite cached screen address
+.SpriteScrnLo		SKIP MaxSprites
+.SpriteScrnHi		SKIP MaxSprites
+
 
 \\ List of free sprite indices
 .SpriteFreeList		SKIP MaxSprites

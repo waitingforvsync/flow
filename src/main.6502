@@ -38,6 +38,27 @@
 	LDA #LO(spritedata):STA SpriteAddrLo,X
 	LDA #HI(spritedata):STA SpriteAddrHi,X
 
+	LDA #40:LDY #22
+	JSR createSpriteAtY
+	LDA #22:STA SpriteNewX0,X:STA SpriteOldX0,X
+	LDA #28:STA SpriteNewX1,X:STA SpriteOldX1,X
+	LDA #LO(spritedata):STA SpriteAddrLo,X
+	LDA #HI(spritedata):STA SpriteAddrHi,X
+
+	LDA #96:LDY #22
+	JSR createSpriteAtY
+	LDA #4:STA SpriteNewX0,X:STA SpriteOldX0,X
+	LDA #10:STA SpriteNewX1,X:STA SpriteOldX1,X
+	LDA #LO(spritedata):STA SpriteAddrLo,X
+	LDA #HI(spritedata):STA SpriteAddrHi,X
+
+	LDA #104:LDY #22
+	JSR createSpriteAtY
+	LDA #7:STA SpriteNewX0,X:STA SpriteOldX0,X
+	LDA #13:STA SpriteNewX1,X:STA SpriteOldX1,X
+	LDA #LO(spritedata):STA SpriteAddrLo,X
+	LDA #HI(spritedata):STA SpriteAddrHi,X
+
 	; check
 	LDA SpriteActiveList+0:CMP #0:BEQ mainLoop
 	LDA SpriteActiveList+1:CMP #2:BEQ mainLoop
@@ -57,5 +78,7 @@
 	.wait LDA reqUpdate:BNE wait
 
 	JSR renderSprites
+	LDA #&02:STA &FE21
+
 	
 	JMP mainLoop
