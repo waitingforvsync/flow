@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="125.995mm"
-   height="92.075996mm"
-   viewBox="0 0 125.995 92.075996"
+   width="139.18539mm"
+   height="91.807961mm"
+   viewBox="0 0 139.18539 91.80796"
    version="1.1"
    id="svg1"
    inkscape:version="1.4.2 (2aeb623e1d, 2025-05-12)"
@@ -25,14 +25,14 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="1.613876"
-     inkscape:cx="78.692539"
-     inkscape:cy="161.41265"
+     inkscape:cx="79.312165"
+     inkscape:cy="180.62106"
      inkscape:window-width="2478"
      inkscape:window-height="1531"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="layer3" />
   <defs
      id="defs1">
     <linearGradient
@@ -87,11 +87,12 @@
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Background">
+     inkscape:label="Background"
+     transform="translate(0.16394278,-0.16394278)">
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.915479;stroke-dasharray:none;stroke-opacity:1"
        id="rect6"
-       width="126.07201"
+       width="139.18539"
        height="91.807961"
        x="-0.16394278"
        y="0.16394278"
@@ -101,7 +102,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-19.030382,-20.834676)">
+     transform="translate(-18.866439,-20.998619)">
     <rect
        style="fill:#e5d9a0;fill-opacity:1;stroke:currentColor;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
        id="rect1"
@@ -142,7 +143,7 @@
          y="81.976906"
          sodipodi:role="line">New</tspan></text>
     <rect
-       style="fill:none;fill-opacity:1;stroke:#f50202;stroke-width:0.5;stroke-dasharray:2,0.5;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#f50202;stroke-width:0.5;stroke-dasharray:2, 0.5;stroke-dashoffset:0;stroke-opacity:1"
        id="rect10"
        width="84.594482"
        height="83.774773"
@@ -157,9 +158,9 @@
        id="text11"><tspan
          sodipodi:role="line"
          id="tspan11"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.5;fill:#f30000;fill-opacity:1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#f30000;fill-opacity:1;stroke-width:0.5"
          x="110.33349"
-         y="107.21859">Dirty rectangle</tspan></text>
+         y="107.21859">Moving sprite bounds</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
        id="rect4"
@@ -188,7 +189,8 @@
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="Text">
+     inkscape:label="Text"
+     transform="translate(0.16394278,-0.16394278)">
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:currentColor;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0;stroke-opacity:1"
@@ -221,7 +223,7 @@
        transform="translate(-19.030382,-20.834676)"><tspan
          sodipodi:role="line"
          id="tspan12"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke-width:1;stroke-dasharray:none;stroke:none;stroke-opacity:1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
          x="29.26379"
          y="65.659088">Dirty </tspan></text>
     <text

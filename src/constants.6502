@@ -12,6 +12,7 @@ ELSE
 	ScreenBaseAddr = &4000
 ENDIF
 
+ScreenSize = &8000 - ScreenBaseAddr
 ScreenHeight = GameHeight + StatusHeight
 ScreenHSyncPos = 98 - (80 - ScreenWidth) DIV 2
 ScreenVSyncPos = 35 - (30 - ScreenHeight) DIV 2

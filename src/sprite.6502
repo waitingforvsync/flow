@@ -107,6 +107,21 @@
     spriteRenderNum = zpTempStart + 4
     rowAddr = zpTempStart + 5
     tempIndex = zpTempStart + 7
+    renderMasks = zpTempStart + 8
+    ; zpTempStart + 18
+
+    ; ------------------- rowStart
+    ;    +------+   y0
+    ;    |      |
+    ;    |      |
+    ; ---+------+-------- rowEnd
+    ;    |      |
+    ;    +------+   y1
+    ;
+    ; -------------------
+
+    ; To add an entry to the render list, y0 < rowEnd
+    ; To remove an entry from the render list, rowStart >= y1
 
     ; Initialise render list
     LDA #0:STA spriteRenderNum
@@ -142,17 +157,22 @@
     ; Calculate this row's screen address (taking into account the hardware scroll base)
     IF SMALL_SCREEN
         LSR A:LSR A             \ C always clear
-        ADC scrnBase+1:BPL P%+4:SBC #&27:STA rowAddr+1
+        ADC scrnBase+1:BPL P%+4:SBC #HI(ScreenSize)-1:STA rowAddr+1
         LDA scrnBase:STA rowAddr
     ELSE
         LSR A:LSR A:LSR A       \ C always clear
         TAY
         LDA scrnBase:ADC RowTabLo,Y:STA rowAddr
-        LDA scrnBase+1:ADC RowTabHi,Y:BPL P%+4:SBC #&3F:STA rowAddr+1
+        LDA scrnBase+1:ADC RowTabHi,Y:BPL P%+4:SBC #HI(ScreenSize)-1:STA rowAddr+1
     ENDIF
 
     CLC:LDA rowStart
     ADC #8:STA rowEnd
+
+    ; Calculate rowAddr+X*8
+    LDA SpriteNewX0,X:ASL A:ASL A:ROL A:ROL A:TAY:AND #&F0:ROR A
+    ADC rowAddr:STA SpriteScrnLo,X
+    TYA:AND #3:ADC rowAddr+1:BPL P%+4:SBC #HI(ScreenSize)-1:STA SpriteScrnHi,X
 
     TXA:STA SpriteRenderList    ; list is empty, so write element 0 directly
     INC spriteRenderNum         ; spriteRenderNum=1
@@ -169,10 +189,10 @@
     CLC:ADC #8:STA rowEnd
 
     IF SMALL_SCREEN
-        LDA rowAddr+1:ADC #2:BPL P%+4:SBC #&27:STA rowAddr+1
+        LDA rowAddr+1:ADC #2:BPL P%+4:SBC #HI(ScreenSize)-1:STA rowAddr+1
     ELSE
         LDA rowAddr:ADC #LO(ScreenWidth * 8):STA rowAddr
-        LDA rowAddr+1:ADC #HI(ScreenWidth *8):BPL P%+4:SBC #&3F:STA rowAddr+1
+        LDA rowAddr+1:ADC #HI(ScreenWidth *8):BPL P%+4:SBC #HI(ScreenSize)-1:STA rowAddr+1
     ENDIF
 
     ; REMOVE FROM RENDER LIST
@@ -240,6 +260,11 @@
     CMP rowEnd                  ; are the top bounds less than the current row end?
     BCS processRenderList       ; no - nothing more to add
 
+    ; Calculate rowAddr+X*8
+    LDA SpriteNewX0,X:ASL A:ASL A:ROL A:ROL A:STA tempIndex:AND #&F0:ROR A
+    ADC rowAddr:STA SpriteScrnLo,X
+    LDA tempIndex:AND #3:ADC rowAddr+1:BPL P%+4:SBC #HI(ScreenSize)-1:STA SpriteScrnHi,X
+
     ; The index we want to add to the render list is in X.
     ; Add it in index-sorted position by starting at the end of the render list
     ; and bubbling items up one place until we find the final resting place.
@@ -277,19 +302,19 @@
     STY tempIndex
     LDX SpriteRenderList,Y
 
-    LDA #0:STA screen+1
-    LDA SpriteNewX0,X:ASL A
-    ASL A:ROL screen+1
-    ASL A:ROL screen+1
-    ADC rowAddr:STA screen
-    LDA screen+1:ADC rowAddr+1:BPL P%+4:SBC #&3F:STA screen+1
+    ; Fetch and update cached screen address
+    LDA SpriteScrnLo,X:STA screen:CLC:ADC #LO(ScreenWidth * 8):STA SpriteScrnLo,X
+    LDA SpriteScrnHi,X:STA screen+1:ADC #HI(ScreenWidth * 8):BPL P%+4:SBC #HI(ScreenSize)-1:STA SpriteScrnHi,X
 
-    LDA SpriteAddrLo,X:STA sprite
+    SEC:LDA rowStart:SBC SpriteNewY0,X:CLC
+    ADC SpriteAddrLo,X:STA sprite
     LDA SpriteAddrHi,X:STA sprite+1
     LDA #0:STA spriteLine:STA spriteRenderMask
 
     LDA SpriteNewX1,X:SEC:SBC SpriteNewX0,X:TAX
+    LDA #1:STA &FE21
     JSR renderSpriteRow
+    LDA #3:STA &FE21
 
     LDY tempIndex
     INY

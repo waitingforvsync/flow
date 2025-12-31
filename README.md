@@ -36,7 +36,7 @@ STA (screen),Y
 INY
 ```
 
-This is 15 cycles per byte more than the unmasked write, so should be avoided where possible. We will try to limit the use of this path to just bytes where sprites are overlapping.
+This is 15 cycles per byte more than the unmasked write, so should be avoided where possible. We will try to limit the use of this path to just bytes where sprites are overlapping. This routine lives in the zero page to try to gain a little more speed from the self-modifying mask table lookups.
 
 ### Avoid flicker
 
@@ -62,44 +62,40 @@ A **sprite** has the following data associated with it:
 - new x, y, width, height
 - sprite data pointer
 
-The old and new x, y, width, height can be seen as a bounding rectangle.
+The old and new x, y, width, height can be seen as bounding rectangles.
 
-The **dirty rectangle** of a sprite is the union of the old and new bounding rectangles.
+The **moving sprite bounds** of a sprite is the union of the old and new bounding rectangles.
 
-![Dirty sprite](/docs/sprite.svg)
+![Moving sprite bounds](/docs/sprite.svg)
 
-
-### Dirty list
-
-We maintain a list of sprite indices, sorted by the y position of their dirty rectangle. We'll call this the **dirty list**.
-
-We can exploit the fact that sprites move small distances each frame by making this list persistent across frames. When a sprite changes its y position, we "bubble" its entry in the dirty list backwards or forwards, as appropriate, until it is correctly sorted.
-
-Now we consider character rows of the screen.
-
-We are going to update each row of the screen in isolation, from top to bottom, keeping track of the dirty rectangles which overlap that row. First we will erase the dirty edges in this row, then we will plot the segment of the sprite in its new position in this row.
-
-Essentially we are breaking sprites up into row-wise chunks. Although that might sound inefficient, it is contiguous screen memory on the BBC Micro. Also, any data we set up for the first sprite row can be kept persistent, so we can pick up where we left off over subsequent rows. 
 
 ### Active list
 
-The first row we update comes from the first entry in the dirty list. We can skip straight to this row as there's nothing above here. We pull this index, and any subsequent indices whose dirty rectangles also start in this character row, into a new list which we'll call the **active list**.
+We maintain a list of sprite indices, sorted by the y position of their moving sprite bounds. We'll call this the **active list**.
 
-The active list contains the sprite indices which we have to consider in this row. It will persist across multiple rows.
+We can exploit the fact that sprites move small distances each frame by making this list persistent across frames. When a sprite changes its y position, we "bubble" its entry in the active list backwards or forwards, as appropriate, until it is correctly sorted.
 
-We also have to remember to remove indices from the active list when the row is no longer in the dirty rectangle.
+Now we consider character rows of the screen.
+
+We are going to update each row of the screen in isolation, from top to bottom, keeping track of the moving sprite bounds which overlap that row. First we will erase the dirty edges in this row, then we will plot the segment of the sprite in its new position in this row.
+
+Essentially we are breaking sprites up into row-wise chunks. Although that might sound inefficient, it is contiguous screen memory on the BBC Micro. Also, any data we set up for the first sprite row can be kept persistent, so we can pick up where we left off over subsequent rows. 
 
 ### Render list
 
-Sprites in the active list don't necessarily have any data to render; we might just need to erase their dirty edge. For example, if a sprite is moving downwards, perhaps it just left a dirty edge in the first row which needs erasing.
+The first row we update comes from the first entry in the active list. We can skip straight to this row as there's nothing above here. We pull this index, and any subsequent indices in the active list whose moving sprite bounds also start in this character row, into a new list which we'll call the **render list**.
 
-So we will maintain a separate list, the **render list** which contains just sprites which need to be plotted on this row. While the active list is unordered, we will make a point of ordering the render list by sprite index. When we walk this, this will provide a stable stacking order for when sprites overlap.
+The render list contains the sprite indices which we have to consider in this row. It will persist across multiple rows. We also have to remember to remove indices from the active list when the row is no longer in the moving sprite bounds.
+
+We will make a point of ordering the render list by sprite index. When we walk this, this will provide a stable stacking order for when sprites on the same row overlap.
+
+Sprites in the render list don't necessarily have any data to render in the current row; we might just need to erase their dirty edge. For example, if a sprite is moving downwards, perhaps it just left a dirty edge in the first row which needs erasing.
 
 We need to observe changes to the render list (indices being added or removed) as the next part of the overlap detection.
 
 ### Overlaps
 
-We are already detecting overlaps in the y direction, by virtue of maintaining a sorted list of dirty rectangles and walking them from top to bottom. At a given moment, all the entries in the active list have dirty rectangle overlaps in the y axis.
+We are already detecting overlaps in the y direction, by virtue of maintaining a sorted list of moving sprite bounds and walking them from top to bottom. At a given moment, all the entries in the render list have moving sprite bounds overlaps in the y axis.
 
 To detect overlaps in the x direction, we will take a different approach.
 
@@ -109,7 +105,7 @@ Let's suppose we are using a BBC Micro screen mode with 80 characters (bytes) ac
 > This is a shortcut which assumes that if a sprite is present in a row, it occupies the entire character height. In reality, two sprites in a row might be overlapping in x, but not really overlapping because they occupy different ranges in y, for example, the fisrt two and the last two lines. In this case we will pay the price for unnecessary masking, but it simplifies things hugely.
 
 
-As we walk the render list (in sprite index order), get the bounds of the sprite in x, and look at the occupancy mask bits for those x positions. A clear bit means that character column will be overwritten; a set bit means it will be written masked. Let's build a **render type bitmask** per sprite containing a copy of this data, up to a maximum width of 8 characters. And finally set the bits in the occupancy mask to mark that position as "now occupied". This will be observed by subsequent entries in the active list.
+As we walk the render list (in sprite index order), get the bounds of the sprite in x, and look at the occupancy mask bits for those x positions. A clear bit means that character column will be overwritten; a set bit means it will be written masked. Let's build a **render type bitmask** per sprite containing a copy of this data, up to a maximum width of 8 characters. And finally set the bits in the occupancy mask to mark that position as "now occupied". This will be observed by subsequent entries in the render list.
 
 For a further optimisation, let's only initialise the occupancy mask when the render list *changes*. While the same sprites span consecutive rows, the occupancy data doesn't change, and we save ourselves some processing!
 

@@ -6,7 +6,7 @@ GUARD Base
 \\ taking into account the allocation needs of child subroutine calls.
 \\ TODO: write an assembler which can do this work for me :)
 
-.zpTempStart		SKIP 16
+.zpTempStart		SKIP 32
 .zpTempEnd
 
 \\ Uninitialized zero page variables
