@@ -51,8 +51,8 @@ MaxActiveSprites = 32
 .SpriteAddrLo		SKIP MaxSprites
 .SpriteAddrHi		SKIP MaxSprites
 ;; Sprite cached screen address
-.SpriteColumnLo		SKIP MaxSprites
-.SpriteColumnHi		SKIP MaxSprites
+;.SpriteColumnLo		SKIP MaxSprites
+;.SpriteColumnHi		SKIP MaxSprites
 
 
 \\ List of free sprite indices
@@ -64,6 +64,10 @@ MaxActiveSprites = 32
 \\ List of sprite indices to render, sorted by sprite index
 .SpriteRenderList	SKIP MaxActiveSprites
 
+\\ We have to multiply by 8 a lot (to get the column screen offset)
+\\ So make a table for it.
+.Mul8Lo				SKIP ScreenWidth
+.Mul8Hi				SKIP ScreenWidth
 
 IF NOT(SMALL_SCREEN)
 .RowTabLo			SKIP 25

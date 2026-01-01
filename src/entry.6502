@@ -169,6 +169,22 @@ ENDIF
 		BNE loop
 	}
 
+	\\ Build Mul8 table
+	{
+		LDA #0
+		TAX
+		TAY
+		.mul8Loop
+		STA Mul8Lo,X
+		PHA
+		TYA:STA Mul8Hi,X:TAY
+		PLA
+		CLC:ADC #8:BCC noCarry:INY:.noCarry
+		INX
+		CPX #ScreenWidth
+		BNE mul8Loop
+	}
+
 IF NOT(SMALL_SCREEN)
 	\\ Build row multiplication table
 	\\ If using small screen, we don't need this as the rows are 512 bytes wide

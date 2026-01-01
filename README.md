@@ -85,7 +85,7 @@ Essentially we are breaking sprites up into row-wise chunks. Although that might
 
 The first row we update comes from the first entry in the active list. We can skip straight to this row as there's nothing above here. We pull this index, and any subsequent indices in the active list whose moving sprite bounds also start in this character row, into a new list which we'll call the **render list**.
 
-The render list contains the sprite indices which we have to consider in this row. It will persist across multiple rows. We also have to remember to remove indices from the active list when the row is no longer in the moving sprite bounds.
+The render list contains the sprite indices which we have to consider in this row. It will persist across multiple rows. We also have to remember to remove indices from the render list when the row is no longer in the moving sprite bounds.
 
 We will make a point of ordering the render list by sprite index. When we walk this, this will provide a stable stacking order for when sprites on the same row overlap.
 
