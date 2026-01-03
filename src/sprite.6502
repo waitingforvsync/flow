@@ -160,16 +160,16 @@
     ; Calculate this row's screen address (taking into account the hardware scroll base)
     IF SMALL_SCREEN
         LSR A:LSR A             \ C always clear
-        ADC scrnBase+1:BPL P%+4:SBC #HI(ScreenSize)-1:STA rowAddr+1
+        ADC scrnBase+1:BPL P%+5:SBC #HI(ScreenSize)-1:CLC:STA rowAddr+1
         LDA scrnBase:STA rowAddr
     ELSE
         LSR A:LSR A:LSR A       \ C always clear
         TAY
         LDA scrnBase:ADC RowTabLo,Y:STA rowAddr
-        LDA scrnBase+1:ADC RowTabHi,Y:BPL P%+4:SBC #HI(ScreenSize)-1:STA rowAddr+1
+        LDA scrnBase+1:ADC RowTabHi,Y:BPL P%+5:SBC #HI(ScreenSize)-1:CLC:STA rowAddr+1
     ENDIF
 
-    CLC:LDA rowStart
+    LDA rowStart
     ADC #8:STA rowEnd
 
     ; Calculate X*8 [we now use a table for this]
@@ -334,7 +334,7 @@
 
     LDY SpriteNewX0,X
     LDA rowAddr:ADC Mul8Lo,Y:STA screen
-    LDA rowAddr+1:ADC Mul8Hi,Y:BPL P%+5:SBC #HI(ScreenSize)-1:CLC:STA screen+1
+    LDA rowAddr+1:ADC Mul8Hi,Y:BPL P%+4:SBC #HI(ScreenSize)-1:STA screen+1
 
     LDA SpriteNewX1,X:SEC:SBC SpriteNewX0,X:TAX
 ;    LDA #1:STA &FE21
@@ -352,6 +352,8 @@
 
 
     .partialBottom
+    ; Y = 0..6, number of lines to render minus 1
+    ; A = sprite line (after adding 7 and EORing with 255)
     ADC #7:EOR #255
     ADC SpriteAddrLo,X:STA sprite
     LDA SpriteAddrHi,X:STA sprite+1
@@ -361,7 +363,25 @@
 
     LDY SpriteNewX0,X
     LDA rowAddr:ADC Mul8Lo,Y:STA screen
-    LDA rowAddr+1:ADC Mul8Hi,Y:BPL P%+5:SBC #HI(ScreenSize)-1:CLC:STA screen+1
+    LDA rowAddr+1:ADC Mul8Hi,Y:BPL partialCommon:SBC #HI(ScreenSize)-1:BCS partialCommon
+
+
+    .partialTop
+    TAY
+	LDA spriteMaskedRoutinesByLine+1,Y:STA renderSpriteBranchDest+1
+	LDA spriteOverwriteRoutinesByLine+1,Y:STA renderSpriteBranchDest-1
+
+    LDA SpriteAddrLo,X:STA sprite
+    LDA SpriteAddrHi,X:STA sprite+1
+
+    TYA
+
+    LDY SpriteNewX0,X
+    SEC:ADC rowAddr:ADC Mul8Lo,Y:STA screen
+    LDA rowAddr+1:ADC Mul8Hi,Y:BPL P%+4:SBC #HI(ScreenSize)-1
+    
+    .partialCommon
+    STA screen+1
 
     LDA SpriteNewX1,X:SEC:SBC SpriteNewX0,X:TAX
 ;    LDA #1:STA &FE21
@@ -372,7 +392,4 @@
 	LDA #renderOverwrite0 - renderSpriteBranchDest:STA renderSpriteBranchDest-1
 
     JMP renderNextSprite
-
-   .partialTop
-
 }

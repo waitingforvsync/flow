@@ -166,7 +166,15 @@ spriteMaskedRoutines = P%-1
 	EQUB LO(renderMasked3)
 	EQUB LO(renderMasked2)
 	EQUB LO(renderMasked1)
+.spriteMaskedRoutinesByLine
 	EQUB LO(renderMasked0)
+	EQUB LO(renderMasked1)
+	EQUB LO(renderMasked2)
+	EQUB LO(renderMasked3)
+	EQUB LO(renderMasked4)
+	EQUB LO(renderMasked5)
+	EQUB LO(renderMasked6)
+	EQUB LO(renderMasked7)
 
 spriteOverwriteRoutines = P%-1
 	EQUB renderOverwrite7 - renderSpriteBranchDest
@@ -176,7 +184,15 @@ spriteOverwriteRoutines = P%-1
 	EQUB renderOverwrite3 - renderSpriteBranchDest
 	EQUB renderOverwrite2 - renderSpriteBranchDest
 	EQUB renderOverwrite1 - renderSpriteBranchDest
+.spriteOverwriteRoutinesByLine
 	EQUB renderOverwrite0 - renderSpriteBranchDest
+	EQUB renderOverwrite1 - renderSpriteBranchDest
+	EQUB renderOverwrite2 - renderSpriteBranchDest
+	EQUB renderOverwrite3 - renderSpriteBranchDest
+	EQUB renderOverwrite4 - renderSpriteBranchDest
+	EQUB renderOverwrite5 - renderSpriteBranchDest
+	EQUB renderOverwrite6 - renderSpriteBranchDest
+	EQUB renderOverwrite7 - renderSpriteBranchDest
 
 
 \\ Erase a character aligned sprite row.

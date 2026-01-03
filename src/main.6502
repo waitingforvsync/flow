@@ -78,7 +78,7 @@
 	.wait LDA reqUpdate:BNE wait
 
 	JSR renderSprites
-	LDA #&02:STA &FE21
+	LDA #&05:STA &FE21
 
 	
 	JMP mainLoop
