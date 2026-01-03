@@ -10,7 +10,7 @@
 
 	JSR initSprites
 
-	LDA #8:LDY #22
+	LDA #15:LDY #22
 	JSR createSpriteAtY
 	LDA #10:STA SpriteNewX0,X:STA SpriteOldX0,X
 	LDA #16:STA SpriteNewX1,X:STA SpriteOldX1,X
