@@ -18,6 +18,8 @@
     ; Default sprite routines - plot an entire 8 line block
 	LDA #LO(renderMasked0):STA renderSpriteBranchDest+1
 	LDA #renderOverwrite0 - renderSpriteBranchDest:STA renderSpriteBranchDest-1
+    LDA #0:STA spriteLine:STA spriteRenderMask
+
     RTS
 }
 
@@ -107,8 +109,9 @@
     spriteRenderNum = zpTempStart + 4
     rowAddr = zpTempStart + 5
     tempIndex = zpTempStart + 7
-    occupancyMask = zpTempStart + 8
-    ; zpTempStart + 18
+    temp1 = zpTempStart + 8
+    temp2 = zpTempStart + 9
+    occupancyMask = zpTempStart + 10
 
     ; ------------------- rowStart
     ;    +------+   y0
@@ -296,46 +299,80 @@
     ; PROCESS RENDER LIST
     ;--------------------
 
+    ; If the render list has changed (entries added or removed), we have to clear the occupancy mask
+    ; and rebuild all the render masks.
+    ; @TODO
+
+    ; Here we have to erase all the dirty edges
+    ; @TODO
+
+    ; Render all the sprites
+    LDA spriteRenderNum:BEQ finishedRenderRow
+
     LDY #0
     .renderRowLoop
-    CPY spriteRenderNum:BEQ finishedRenderRow
     STY tempIndex
     LDX SpriteRenderList,Y
 
-    ; Fetch and update cached screen address
-    ; C clear from CPY spriteRenderNum
-    LDA rowEnd:SBC SpriteNewY0,X:CMP #8:BCS alignedTop:TAY:EOR #7:BEQ alignedTop
-;    JMP (&FFFC) ; TODO start unaligned sprite rows
-    .alignedTop
-    LDY SpriteNewX0,X
-    CLC
-    LDA rowAddr:ADC Mul8Lo,Y:STA screen
-    LDA rowAddr+1:ADC Mul8Hi,Y:BPL P%+4:SBC #HI(ScreenSize)-1:STA screen+1
+    ; If row is below new sprite bounds, skip
+    ; This is (NewY1 - rowStart - 1) because C clear
+    CLC:LDA SpriteNewY1,X:SBC rowStart:BCC renderNextSprite:TAY
 
-    SEC:LDA rowStart:SBC SpriteNewY0,X:CLC
+    ; If row is above new sprite bounds, skip
+    LDA SpriteNewY0,X:SBC rowEnd:BCS renderNextSprite
+
+    ; Y = number of sprite lines from the row top, minus 1; 7 is a full sprite block
+    CPY #7:BCC partialBottom
+
+    ; A <= &F8: full sprite block, otherwise partial sprite block
+    ; C set, so we add 7 here
+    ADC #6:BCS partialTop
+
+    EOR #255
     ADC SpriteAddrLo,X:STA sprite
     LDA SpriteAddrHi,X:STA sprite+1
-    LDA #0:STA spriteLine:STA spriteRenderMask
 
-    ; handle partial end sprite blocks
-    SEC:LDA SpriteNewY1,X:SBC rowStart:CMP #8:BCS fullSpriteBlock
-    TAY
-	LDA spriteMaskedRoutines,Y:STA renderSpriteBranchDest+1
-	LDA spriteOverwriteRoutines,Y:STA renderSpriteBranchDest-1
-    .fullSpriteBlock
+    LDY SpriteNewX0,X
+    LDA rowAddr:ADC Mul8Lo,Y:STA screen
+    LDA rowAddr+1:ADC Mul8Hi,Y:BPL P%+5:SBC #HI(ScreenSize)-1:CLC:STA screen+1
 
     LDA SpriteNewX1,X:SEC:SBC SpriteNewX0,X:TAX
-    LDA #1:STA &FE21
+;    LDA #1:STA &FE21
     JSR renderSpriteRow
-    LDA #3:STA &FE21
+;    LDA #3:STA &FE21
 
-	LDA #LO(renderMasked0):STA renderSpriteBranchDest+1
-	LDA #renderOverwrite0 - renderSpriteBranchDest:STA renderSpriteBranchDest-1
-
+    .renderNextSprite
     LDY tempIndex
     INY
+    CPY spriteRenderNum
     BNE renderRowLoop
 
     .finishedRenderRow
     JMP rowLoop
+
+
+    .partialBottom
+    ADC #7:EOR #255
+    ADC SpriteAddrLo,X:STA sprite
+    LDA SpriteAddrHi,X:STA sprite+1
+
+	LDA spriteMaskedRoutines+1,Y:STA renderSpriteBranchDest+1
+	LDA spriteOverwriteRoutines+1,Y:STA renderSpriteBranchDest-1
+
+    LDY SpriteNewX0,X
+    LDA rowAddr:ADC Mul8Lo,Y:STA screen
+    LDA rowAddr+1:ADC Mul8Hi,Y:BPL P%+5:SBC #HI(ScreenSize)-1:CLC:STA screen+1
+
+    LDA SpriteNewX1,X:SEC:SBC SpriteNewX0,X:TAX
+;    LDA #1:STA &FE21
+    JSR renderSpriteRow
+;    LDA #3:STA &FE21
+
+	LDA #LO(renderMasked0):STA renderSpriteBranchDest+1
+	LDA #renderOverwrite0 - renderSpriteBranchDest:STA renderSpriteBranchDest-1
+
+    JMP renderNextSprite
+
+   .partialTop
+
 }
